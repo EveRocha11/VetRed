@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetRed - Panel de Empleado</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/empleado-consultas.css">
+</head>
+<body>
+    <div class="employee-container">
+        <!-- Header -->
+        <div class="employee-header">
+            <div class="header-nav">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    VETRET
+                </div>
+                <div class="header-info">
+                    <div class="doctor-info">
+                        <div class="doctor-avatar">
+                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='30' r='20' fill='%23A0522D'/><ellipse cx='50' cy='70' rx='30' ry='25' fill='%23228B22'/><circle cx='42' cy='25' r='2' fill='%23000'/><circle cx='58' cy='25' r='2' fill='%23000'/><path d='M 42 35 Q 50 40 58 35' stroke='%23000' stroke-width='2' fill='none'/></svg>" alt="Dr. Avatar" style="width: 40px; height: 40px; border-radius: 50%;">
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: white;">Dr. María González</div>
+                            <div style="font-size: 0.8rem; color: rgba(255,255,255,0.8);">mariagonzalez@vetclinic.com • Cirujano</div>
+                        </div>
+                    </div>
+                    <div class="clinic-info">
+                        <div style="font-weight: 600; color: white;">VetRed Sede Quito</div>
+                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.8);">Quito, Ecuador</div>
+                    </div>
+                    <div class="date-info">
+                        <i class="fas fa-calendar-alt" style="color: white;"></i>
+                        <span style="color: white; font-weight: 600;">miércoles, 16 de julio de 2025</span>
+                    </div>
+                </div>
+                <div class="nav-buttons">
+                    <a href="index.html" class="nav-btn btn-inicio">Inicio</a>
+                    <a href="login.html" class="nav-btn btn-cerrar">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="employee-content">
+            <!-- Consultation Interface -->
+            <div class="consultation-interface">
+                <!-- Consultas de Hoy -->
+                <div class="consultation-section">
+                    <div class="section-header">
+                        <div>
+                            <h3 class="section-title">Consultas de Hoy</h3>
+                            <p class="section-subtitle">5 consultas programadas</p>
+                        </div>
+                    </div>
+                    
+                    <div class="consultation-item" onclick="selectConsultation('09:00', 'Ana Rodríguez', 'Max', 'Perro')">
+                        <div class="consultation-time">
+                            <div class="time-badge">09:00</div>
+                            <div>
+                                <div class="patient-info">Ana Rodríguez</div>
+                                <div class="pet-name">Max (Perro)</div>
+                            </div>
+                        </div>
+                        <div class="status-badge status-completado">Completado</div>
+                    </div>
+                    
+                    <div class="consultation-item" onclick="selectConsultation('10:30', 'Carlos Mendoza', 'Luna', 'Gato')">
+                        <div class="consultation-time">
+                            <div class="time-badge">10:30</div>
+                            <div>
+                                <div class="patient-info">Carlos Mendoza</div>
+                                <div class="pet-name">Luna (Gato)</div>
+                            </div>
+                        </div>
+                        <div class="status-badge status-completado">Completado</div>
+                    </div>
+                    
+                    <div class="consultation-item active" onclick="selectConsultation('11:45', 'Laura Jiménez', 'Max', 'Perro')">
+                        <div class="consultation-time">
+                            <div class="time-badge">11:45</div>
+                            <div>
+                                <div class="patient-info">Laura Jiménez</div>
+                                <div class="pet-name">Max (Perro)</div>
+                            </div>
+                        </div>
+                        <div class="status-badge status-pendiente">Pendiente</div>
+                    </div>
+                    
+                    <div class="consultation-item" onclick="selectConsultation('14:00', 'Ana Rodríguez', 'Max', 'Perro')">
+                        <div class="consultation-time">
+                            <div class="time-badge">14:00</div>
+                            <div>
+                                <div class="patient-info">Ana Rodríguez</div>
+                                <div class="pet-name">Max (Perro)</div>
+                            </div>
+                        </div>
+                        <div class="status-badge status-pendiente">Pendiente</div>
+                    </div>
+                    
+                    <div class="consultation-item" onclick="selectConsultation('15:30', 'Ana Rodríguez', 'Max', 'Perro')">
+                        <div class="consultation-time">
+                            <div class="time-badge">15:30</div>
+                            <div>
+                                <div class="patient-info">Ana Rodríguez</div>
+                                <div class="pet-name">Max (Perro)</div>
+                            </div>
+                        </div>
+                        <div class="status-badge status-pendiente">Pendiente</div>
+                    </div>
+                </div>
+
+                <!-- Detalles de Consulta -->
+                <div class="consultation-section">
+                    <div class="section-header">
+                        <div>
+                            <h3 class="section-title">Detalles de Consulta</h3>
+                            <p class="section-subtitle" id="consultationTime">11:45 - Laura Jiménez</p>
+                        </div>
+                    </div>
+                    
+                    <div class="date-info">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>miércoles, 16 de julio de 2025</span>
+                    </div>
+                    
+                    <div class="details-form">
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label class="field-label">Cliente</label>
+                                <input type="text" class="field-input" value="Laura Jiménez" readonly>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Mascota</label>
+                                <input type="text" class="field-input" value="Max (Perro)" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label class="field-label"></label>
+                                <input type="text" class="field-input" value="Golden Retriever" readonly>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label"></label>
+                                <input type="text" class="field-input" value="3 años" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label class="field-label"></label>
+                                <input type="text" class="field-input" value="- Café" readonly>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label"></label>
+                                <input type="text" class="field-input" value="- 34 kg" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="form-field">
+                            <label class="field-label"></label>
+                            <input type="text" class="field-input" value="- 15/08/2024" readonly>
+                        </div>
+                        
+                        <div class="form-field">
+                            <label class="field-label">Motivo de Consulta</label>
+                            <input type="text" class="field-input" value="Revisión general y vacunación">
+                        </div>
+                        
+                        <div class="form-field">
+                            <label class="field-label">Observaciones</label>
+                            <textarea class="field-input field-textarea" placeholder="Agregar observaciones sobre la consulta..."></textarea>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn-action btn-pendiente">Pendiente</button>
+                            <button class="btn-action btn-guardar">Guardar observaciones</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedConsultation = null;
+
+        function selectConsultation(time, client, pet, petType) {
+            // Remove active class from all items
+            document.querySelectorAll('.consultation-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked item
+            event.currentTarget.classList.add('active');
+            
+            // Update consultation details
+            document.getElementById('consultationTime').textContent = `${time} - ${client}`;
+            
+            // Update form fields based on selected consultation
+            const petData = {
+                '09:00': { client: 'Ana Rodríguez', pet: 'Max (Perro)', breed: 'Golden Retriever', age: '3 años', color: '- Café', weight: '- 34 kg', lastVisit: '- 15/08/2024', reason: 'Revisión general completada' },
+                '10:30': { client: 'Carlos Mendoza', pet: 'Luna (Gato)', breed: 'Siamés', age: '2 años', color: '- Gris', weight: '- 4 kg', lastVisit: '- 10/07/2024', reason: 'Vacunación completada' },
+                '11:45': { client: 'Laura Jiménez', pet: 'Max (Perro)', breed: 'Golden Retriever', age: '3 años', color: '- Café', weight: '- 34 kg', lastVisit: '- 15/08/2024', reason: 'Revisión general y vacunación' },
+                '14:00': { client: 'Ana Rodríguez', pet: 'Max (Perro)', breed: 'Labrador', age: '5 años', color: '- Negro', weight: '- 28 kg', lastVisit: '- 20/06/2024', reason: 'Control de rutina' },
+                '15:30': { client: 'Ana Rodríguez', pet: 'Max (Perro)', breed: 'Pastor Alemán', age: '4 años', color: '- Marrón', weight: '- 32 kg', lastVisit: '- 05/07/2024', reason: 'Chequeo post-cirugía' }
+            };
+            
+            const data = petData[time];
+            if (data) {
+                const inputs = document.querySelectorAll('.field-input');
+                inputs[0].value = data.client;
+                inputs[1].value = data.pet;
+                inputs[2].value = data.breed;
+                inputs[3].value = data.age;
+                inputs[4].value = data.color;
+                inputs[5].value = data.weight;
+                inputs[6].value = data.lastVisit;
+                inputs[7].value = data.reason;
+            }
+            
+            selectedConsultation = { time, client, pet, petType };
+        }
+
+        // Animación de entrada
+        window.addEventListener('load', function() {
+            document.querySelectorAll('.consultation-section').forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    section.style.transition = 'all 0.6s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 300);
+            });
+        });
+
+        // Save observations functionality
+        document.querySelector('.btn-guardar').addEventListener('click', function() {
+            const observations = document.querySelector('.field-textarea').value;
+            if (observations.trim()) {
+                alert('Observaciones guardadas exitosamente');
+            } else {
+                alert('Por favor, agregue observaciones antes de guardar');
+            }
+        });
+
+        // Toggle status functionality
+        document.querySelector('.btn-pendiente').addEventListener('click', function() {
+            const button = this;
+            if (button.textContent === 'Pendiente') {
+                button.textContent = 'Completado';
+                button.style.background = '#28a745';
+                
+                // Update status in the consultation list
+                if (selectedConsultation) {
+                    const activeItem = document.querySelector('.consultation-item.active .status-badge');
+                    if (activeItem) {
+                        activeItem.textContent = 'Completado';
+                        activeItem.className = 'status-badge status-completado';
+                    }
+                }
+            } else {
+                button.textContent = 'Pendiente';
+                button.style.background = '#6c757d';
+                
+                // Update status in the consultation list
+                if (selectedConsultation) {
+                    const activeItem = document.querySelector('.consultation-item.active .status-badge');
+                    if (activeItem) {
+                        activeItem.textContent = 'Pendiente';
+                        activeItem.className = 'status-badge status-pendiente';
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

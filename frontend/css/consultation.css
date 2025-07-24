@@ -1,0 +1,305 @@
+/* ==========================================================================
+   CONSULTATION COMPONENTS - Consultation Interface, Forms, Details
+   ========================================================================== */
+
+/* Consultation Layout */
+.consultation-interface {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+}
+
+.consultation-section {
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Section Headers */
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--border-light);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.section-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+/* Details Form */
+.details-form {
+    background: rgba(248, 250, 252, 0.5);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+}
+
+/* Pet Information Display */
+.pet-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.pet-info-item {
+    background: rgba(248, 250, 252, 0.8);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-md);
+    border-left: 4px solid var(--primary-blue);
+}
+
+.pet-info-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--spacing-xs);
+}
+
+.pet-info-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* Consultation History */
+.consultation-history {
+    margin-top: var(--spacing-lg);
+}
+
+.history-item {
+    background: white;
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    border-left: 4px solid var(--primary-green);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.history-date {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: var(--spacing-xs);
+}
+
+.history-diagnosis {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-xs);
+}
+
+.history-notes {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+/* Medical Records */
+.medical-record {
+    background: white;
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.record-type {
+    font-weight: 600;
+    color: var(--primary-blue);
+}
+
+.record-date {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.record-content {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    line-height: 1.5;
+}
+
+/* Treatment Plans */
+.treatment-plan {
+    background: linear-gradient(135deg, rgba(74, 144, 226, 0.1), rgba(80, 200, 120, 0.1));
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    border: 1px solid rgba(74, 144, 226, 0.2);
+}
+
+.treatment-title {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-sm);
+}
+
+.treatment-steps {
+    list-style: none;
+    padding: 0;
+}
+
+.treatment-step {
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+.treatment-step:last-child {
+    border-bottom: none;
+}
+
+.treatment-step::before {
+    content: "✓";
+    color: var(--primary-green);
+    font-weight: bold;
+    margin-right: var(--spacing-xs);
+}
+
+/* Prescription */
+.prescription {
+    background: rgba(255, 248, 220, 0.8);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    border-left: 4px solid #f59e0b;
+}
+
+.prescription-header {
+    font-weight: 600;
+    color: #92400e;
+    margin-bottom: var(--spacing-sm);
+}
+
+.medication-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid rgba(146, 64, 14, 0.1);
+}
+
+.medication-name {
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.medication-dosage {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.quick-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    background: white;
+    color: var(--text-dark);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: var(--transition-normal);
+}
+
+.quick-btn:hover {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+}
+
+/* Appointment Scheduler */
+.scheduler {
+    background: white;
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.time-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.time-slot {
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    font-size: 0.875rem;
+}
+
+.time-slot:hover {
+    background: rgba(74, 144, 226, 0.1);
+    border-color: var(--primary-blue);
+}
+
+.time-slot.available {
+    background: rgba(80, 200, 120, 0.1);
+    border-color: var(--primary-green);
+}
+
+.time-slot.selected {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+}
+
+.time-slot.unavailable {
+    background: rgba(220, 53, 69, 0.1);
+    border-color: #dc3545;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Responsive Consultation */
+@media (max-width: 768px) {
+    .consultation-interface {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .pet-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-actions {
+        justify-content: center;
+    }
+    
+    .time-slots {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

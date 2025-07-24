@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetRed - Agendar Cita</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/agenda-cita.css">
+</head>
+<body>
+    <div class="agenda-container">
+        <!-- Header -->
+        <div class="agenda-header">
+            <div class="header-nav">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    VETRET
+                </div>
+                <div class="nav-buttons">
+                    <a href="usuario.html" class="nav-btn btn-editar">editar info personal</a>
+                    <a href="login.html" class="nav-btn btn-cerrar">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="agenda-content">
+            <!-- Page Title -->
+            <div class="page-title">
+                <h1 class="main-title">INFORMACIÓN</h1>
+                <p class="subtitle">Agenda tu cita</p>
+            </div>
+
+            <!-- Form Container -->
+            <div class="form-container">
+                <div id="successMessage" class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    ¡Cita agendada exitosamente! Recibirá una confirmación por email.
+                </div>
+
+                <form id="agendarCitaForm">
+                    <div class="form-grid">
+                        <!-- Seleccione la sede -->
+                        <div class="form-group full-width">
+                            <label class="form-label">Seleccione la sede:</label>
+                            <select class="form-select" id="sede" required>
+                                <option value="">Seleccionar sede</option>
+                                <option value="Sede Centro">Sede Centro</option>
+                                <option value="Sede Norte">Sede Norte</option>
+                                <option value="Sede Sur">Sede Sur</option>
+                                <option value="Sede Este">Sede Este</option>
+                            </select>
+                        </div>
+
+                        <!-- Nombre -->
+                        <div class="form-group">
+                            <label class="form-label">Nombre:</label>
+                            <input type="text" class="form-input" id="nombre" value="Duque" readonly>
+                        </div>
+
+                        <!-- Especie -->
+                        <div class="form-group">
+                            <label class="form-label">Especie:</label>
+                            <input type="text" class="form-input" id="especie" value="Perro" readonly>
+                        </div>
+
+                        <!-- Raza -->
+                        <div class="form-group">
+                            <label class="form-label">Raza:</label>
+                            <input type="text" class="form-input" id="raza" value="Poodle" readonly>
+                        </div>
+
+                        <!-- Fecha nacimiento -->
+                        <div class="form-group">
+                            <label class="form-label">Fecha nacimiento:</label>
+                            <input type="text" class="form-input" id="fechaNacimiento" value="20-10-2014" readonly>
+                        </div>
+
+                        <!-- Sexo -->
+                        <div class="form-group">
+                            <label class="form-label">Sexo:</label>
+                            <input type="text" class="form-input" id="sexo" value="Macho" readonly>
+                        </div>
+
+                        <!-- Color -->
+                        <div class="form-group">
+                            <label class="form-label">Color:</label>
+                            <input type="text" class="form-input" id="color" value="Café" readonly>
+                        </div>
+
+                        <!-- Peso -->
+                        <div class="form-group">
+                            <label class="form-label">Peso(kg):</label>
+                            <input type="text" class="form-input" id="peso" value="7 kg" readonly>
+                        </div>
+
+                        <!-- Fecha -->
+                        <div class="form-group">
+                            <label class="form-label">Fecha:</label>
+                            <input type="date" class="form-input" id="fechaCita" value="2025-07-21" required>
+                        </div>
+
+                        <!-- Hora -->
+                        <div class="form-group">
+                            <label class="form-label">Hora:</label>
+                            <select class="form-select" id="hora" required>
+                                <option value="">Seleccionar hora</option>
+                                <option value="08:00">08:00 AM</option>
+                                <option value="09:00">09:00 AM</option>
+                                <option value="10:00" selected>10:00 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="12:00">12:00 PM</option>
+                                <option value="14:00">02:00 PM</option>
+                                <option value="15:00">03:00 PM</option>
+                                <option value="16:00">04:00 PM</option>
+                                <option value="17:00">05:00 PM</option>
+                            </select>
+                        </div>
+
+                        <!-- Motivo -->
+                        <div class="form-group">
+                            <label class="form-label">Motivo:</label>
+                            <select class="form-select" id="motivo" required>
+                                <option value="">Seleccionar motivo</option>
+                                <option value="Consulta General">Consulta General</option>
+                                <option value="Dolor de estómago" selected>Dolor de estómago</option>
+                                <option value="Vacunación">Vacunación</option>
+                                <option value="Cirugía">Cirugía</option>
+                                <option value="Control">Control</option>
+                                <option value="Emergencia">Emergencia</option>
+                                <option value="Otros">Otros</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-guardar">
+                        <i class="fas fa-save"></i> Guardar cita
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Establecer fecha mínima como hoy
+        document.addEventListener('DOMContentLoaded', function() {
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('fechaCita').min = hoy;
+        });
+
+        // Manejar envío del formulario
+        document.getElementById('agendarCitaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                sede: document.getElementById('sede').value,
+                nombre: document.getElementById('nombre').value,
+                especie: document.getElementById('especie').value,
+                raza: document.getElementById('raza').value,
+                fechaNacimiento: document.getElementById('fechaNacimiento').value,
+                sexo: document.getElementById('sexo').value,
+                color: document.getElementById('color').value,
+                peso: document.getElementById('peso').value,
+                fechaCita: document.getElementById('fechaCita').value,
+                hora: document.getElementById('hora').value,
+                motivo: document.getElementById('motivo').value
+            };
+
+            // Validar campos requeridos
+            if (!formData.sede || !formData.fechaCita || !formData.hora || !formData.motivo) {
+                alert('Por favor complete todos los campos requeridos.');
+                return;
+            }
+
+            // Mostrar mensaje de éxito
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'flex';
+            
+            // Scroll suave hacia el mensaje
+            successMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // Simular guardado y redirección después de 3 segundos
+            setTimeout(() => {
+                alert(`¡Cita confirmada!\n\n` +
+                      `Mascota: ${formData.nombre}\n` +
+                      `Sede: ${formData.sede}\n` +
+                      `Fecha: ${new Date(formData.fechaCita).toLocaleDateString('es-ES')}\n` +
+                      `Hora: ${formData.hora}\n` +
+                      `Motivo: ${formData.motivo}\n\n` +
+                      `Será redirigido al panel de usuario.`);
+                
+                // Redirigir a la página de usuario
+                window.location.href = 'usuario.html';
+            }, 2000);
+        });
+
+        // Efectos de animación en los campos
+        document.querySelectorAll('.form-input, .form-select').forEach(field => {
+            field.addEventListener('focus', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            field.addEventListener('blur', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Animación del botón de guardar
+        document.querySelector('.btn-guardar').addEventListener('mouseenter', function() {
+            this.innerHTML = '<i class="fas fa-check"></i> Confirmar cita';
+        });
+
+        document.querySelector('.btn-guardar').addEventListener('mouseleave', function() {
+            this.innerHTML = '<i class="fas fa-save"></i> Guardar cita';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetRed - Gestión de Citas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/citas.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-paw"></i> VETRET</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="admin.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    Empleados
+                </a>
+                <a href="#" class="nav-item active">
+                    <i class="fas fa-calendar-alt"></i>
+                    Citas
+                </a>
+                <a href="clientes.html" class="nav-item">
+                    <i class="fas fa-user-friends"></i>
+                    Clientes
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    Reportes
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    Configuración
+                </a>
+                <a href="../index.html" class="nav-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Cerrar Sesión
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="content-header">
+                <div>
+                    <h1>Citas</h1>
+                    <p>Gestión de Citas</p>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <h3>Christian Puchaicela</h3>
+                        <p>admin@vetclinic.com</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Citas Content -->
+            <div class="citas-content">
+                <!-- Calendario Section -->
+                <div class="calendario-section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2>Calendario de Citas - Hoy</h2>
+                            <p>Programe y administre las citas veterinarias</p>
+                        </div>
+                        <button class="btn-add" onclick="agregarCita()">
+                            <i class="fas fa-plus"></i>
+                            Nueva Cita
+                        </button>
+                    </div>
+
+                    <div class="calendar-header">
+                        <i class="fas fa-calendar-day"></i>
+                        <span id="fechaActual"></span>
+                    </div>
+
+                    <div id="citas-container">
+                        <div class="cita-card">
+                            <div class="cita-hora">
+                                <i class="fas fa-clock"></i>
+                                <span class="hora">09:00</span>
+                            </div>
+                            <div class="cita-paciente">Juan Pérez</div>
+                            <div class="cita-mascota">Max (Perro)</div>
+                            <div class="cita-doctor">Dr. María González</div>
+                        </div>
+
+                        <div class="cita-card">
+                            <div class="cita-hora">
+                                <i class="fas fa-clock"></i>
+                                <span class="hora">10:30</span>
+                            </div>
+                            <div class="cita-paciente">Ana Silva</div>
+                            <div class="cita-mascota">Luna (Gato)</div>
+                            <div class="cita-doctor">Dr. Carlos Rodríguez</div>
+                        </div>
+
+                        <div class="cita-card">
+                            <div class="cita-hora">
+                                <i class="fas fa-clock"></i>
+                                <span class="hora">14:00</span>
+                            </div>
+                            <div class="cita-paciente">Pedro López</div>
+                            <div class="cita-mascota">Rocky (Perro)</div>
+                            <div class="cita-doctor">Dra. Ana Martínez</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Disponibilidad Section -->
+                <div class="disponibilidad-section">
+                    <h3 class="disponibilidad-title">Disponibilidad</h3>
+                    
+                    <div class="doctor-card">
+                        <div class="doctor-info">
+                            <h4>Dr. María González</h4>
+                            <div class="doctor-especialidad">Cirugía General</div>
+                            <span class="status-badge status-disponible">Disponible</span>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card">
+                        <div class="doctor-info">
+                            <h4>Dr. Carlos Rodríguez</h4>
+                            <div class="doctor-especialidad">Medicina Interna</div>
+                            <span class="status-badge status-ocupado">Ocupado</span>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card">
+                        <div class="doctor-info">
+                            <h4>Dra. Ana Martínez</h4>
+                            <div class="doctor-especialidad">Dermatología</div>
+                            <span class="status-badge status-disponible">Disponible</span>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card">
+                        <div class="doctor-info">
+                            <h4>Dr. Luis Herrera</h4>
+                            <div class="doctor-especialidad">Cardiología</div>
+                            <span class="status-badge status-disponible">Disponible</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar/editar cita -->
+    <div id="citaModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+            <h3 style="margin-bottom: 20px; color: var(--text-dark); font-size: 1.5rem;">Nueva Cita</h3>
+            <form id="citaForm">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Paciente:</label>
+                    <input type="text" id="paciente" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Mascota:</label>
+                    <input type="text" id="mascota" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Doctor:</label>
+                    <select id="doctor" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                        <option value="">Seleccionar doctor</option>
+                        <option value="Dr. María González">Dr. María González</option>
+                        <option value="Dr. Carlos Rodríguez">Dr. Carlos Rodríguez</option>
+                        <option value="Dra. Ana Martínez">Dra. Ana Martínez</option>
+                        <option value="Dr. Luis Herrera">Dr. Luis Herrera</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Hora:</label>
+                    <input type="time" id="hora" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                </div>
+                <div style="margin-bottom: 30px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Fecha:</label>
+                    <input type="date" id="fecha" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                </div>
+                <div style="display: flex; gap: 15px; justify-content: flex-end;">
+                    <button type="button" onclick="cerrarModalCita()" style="padding: 12px 24px; background: #e2e8f0; color: var(--text-dark); border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">Cancelar</button>
+                    <button type="submit" style="padding: 12px 24px; background: linear-gradient(45deg, #4fd1c7, #667eea); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar fecha actual
+        function mostrarFechaActual() {
+            const hoy = new Date();
+            const opciones = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            document.getElementById('fechaActual').textContent = 
+                hoy.toLocaleDateString('es-ES', opciones);
+        }
+
+        function agregarCita() {
+            document.getElementById('citaModal').style.display = 'flex';
+            document.getElementById('citaForm').reset();
+            // Establecer fecha actual por defecto
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('fecha').value = hoy;
+        }
+
+        function cerrarModalCita() {
+            document.getElementById('citaModal').style.display = 'none';
+        }
+
+        document.getElementById('citaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const paciente = document.getElementById('paciente').value;
+            const mascota = document.getElementById('mascota').value;
+            const doctor = document.getElementById('doctor').value;
+            const hora = document.getElementById('hora').value;
+            
+            // Crear nueva tarjeta de cita
+            const container = document.getElementById('citas-container');
+            const nuevaCita = document.createElement('div');
+            nuevaCita.className = 'cita-card';
+            nuevaCita.innerHTML = `
+                <div class="cita-hora">
+                    <i class="fas fa-clock"></i>
+                    <span class="hora">${hora}</span>
+                </div>
+                <div class="cita-paciente">${paciente}</div>
+                <div class="cita-mascota">${mascota}</div>
+                <div class="cita-doctor">${doctor}</div>
+            `;
+            
+            // Insertar en orden cronológico
+            const citas = Array.from(container.children);
+            let insertado = false;
+            
+            for (let i = 0; i < citas.length; i++) {
+                const horaExistente = citas[i].querySelector('.hora').textContent;
+                if (hora < horaExistente) {
+                    container.insertBefore(nuevaCita, citas[i]);
+                    insertado = true;
+                    break;
+                }
+            }
+            
+            if (!insertado) {
+                container.appendChild(nuevaCita);
+            }
+            
+            cerrarModalCita();
+        });
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('citaModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModalCita();
+            }
+        });
+
+        // Inicializar
+        mostrarFechaActual();
+    </script>
+</body>
+</html>
