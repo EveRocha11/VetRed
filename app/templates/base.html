@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>VetRed Web</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+    th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+    th { background: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <h1>Consultas Veterinarias</h1>
+
+  {% if consultas %}
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Motivo</th>
+          <th>Estado</th>
+          <th>Observaciones</th>
+          <th>Clínica</th>
+          <th>Empleado</th>
+          <th>Mascota</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in consultas %}
+        <tr>
+          <td>{{ c.idConsulta }}</td>
+          <td>{{ c.fecha }}</td>
+          <td>{{ c.hora }}</td>
+          <td>{{ c.motivo }}</td>
+          <td>{{ c.estado or '-' }}</td>
+          <td>{{ c.observaciones or '-' }}</td>
+          <td>{{ c.idClinica }}</td>
+          <td>{{ c.idEmpleado }}</td>
+          <td>{{ c.idMascota }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No hay consultas registradas.</p>
+  {% endif %}
+
+</body>
+</html>
