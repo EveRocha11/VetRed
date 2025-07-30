@@ -65,6 +65,21 @@
             font-weight: 600;
         }
 
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            background-color: white;
+            transition: border-color 0.3s;
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
         .form-group input {
             width: 100%;
             padding: 12px 16px;
@@ -139,13 +154,25 @@
 
         <form id="loginForm">
             <div class="form-group">
-                <label for="correo">Correo Electrónico:</label>
-                <input type="email" id="correo" name="correo" required>
+                <label for="tipoUsuario">Tipo de Usuario:</label>
+                <select id="tipoUsuario" name="tipoUsuario" required>
+                    <option value="">Seleccione tipo de usuario</option>
+                    <option value="cliente">Cliente</option>
+                    <option value="empleado">Empleado</option>
+                    <option value="administrador">Administrador</option>
+                </select>
             </div>
 
             <div class="form-group">
-                <label for="password">ID Cliente:</label>
-                <input type="number" id="password" name="password" required placeholder="Ingrese su ID de cliente">
+                <label for="identificador" id="labelIdentificador">Identificador:</label>
+                <input type="text" id="identificador" name="identificador" required 
+                       placeholder="Seleccione primero el tipo de usuario">
+            </div>
+
+            <div class="form-group">
+                <label for="nombre">Nombre Completo:</label>
+                <input type="text" id="nombre" name="nombre" required 
+                       placeholder="Ingrese su nombre completo">
             </div>
 
             <button type="submit" class="btn-login">
@@ -161,6 +188,35 @@
     </div>
 
     <script>
+        // Cambiar etiquetas y placeholders según el tipo de usuario seleccionado
+        document.getElementById('tipoUsuario').addEventListener('change', function() {
+            const tipoUsuario = this.value;
+            const labelIdentificador = document.getElementById('labelIdentificador');
+            const inputIdentificador = document.getElementById('identificador');
+            
+            switch(tipoUsuario) {
+                case 'cliente':
+                    labelIdentificador.textContent = 'Correo Electrónico:';
+                    inputIdentificador.type = 'email';
+                    inputIdentificador.placeholder = 'Ingrese su correo electrónico';
+                    break;
+                case 'empleado':
+                    labelIdentificador.textContent = 'ID Empleado:';
+                    inputIdentificador.type = 'number';
+                    inputIdentificador.placeholder = 'Ingrese su ID de empleado';
+                    break;
+                case 'administrador':
+                    labelIdentificador.textContent = 'ID Administrador:';
+                    inputIdentificador.type = 'number';
+                    inputIdentificador.placeholder = 'Ingrese su ID de administrador';
+                    break;
+                default:
+                    labelIdentificador.textContent = 'Identificador:';
+                    inputIdentificador.type = 'text';
+                    inputIdentificador.placeholder = 'Seleccione primero el tipo de usuario';
+            }
+        });
+
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -172,9 +228,23 @@
             successDiv.style.display = 'none';
             
             const formData = {
-                correo: document.getElementById('correo').value,
-                password: document.getElementById('password').value
+                tipo_usuario: document.getElementById('tipoUsuario').value,
+                identificador: document.getElementById('identificador').value,
+                nombre: document.getElementById('nombre').value
             };
+
+            // Validaciones básicas
+            if (!formData.tipo_usuario) {
+                errorDiv.textContent = 'Por favor seleccione un tipo de usuario';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (!formData.identificador || !formData.nombre) {
+                errorDiv.textContent = 'Por favor complete todos los campos';
+                errorDiv.style.display = 'block';
+                return;
+            }
 
             try {
                 const response = await fetch('/api/auth/login', {
@@ -192,12 +262,13 @@
                     successDiv.textContent = 'Login exitoso. Redirigiendo...';
                     successDiv.style.display = 'block';
                     
-                    // Guardar información del usuario (opcional)
+                    // Guardar información del usuario
                     localStorage.setItem('user', JSON.stringify(data.user));
                     
-                    // Redirigir después de 1 segundo
+                    // Redirigir según el tipo de usuario
+                    const redirectUrl = data.user.redirect || '/admin';
                     setTimeout(() => {
-                        window.location.href = '/admin';
+                        window.location.href = redirectUrl;
                     }, 1000);
                 } else {
                     // Error en login

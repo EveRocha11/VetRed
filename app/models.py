@@ -33,10 +33,34 @@ class ClienteInfo(BaseModel):
     nombre:          str
 
 class LoginRequest(BaseModel):
-    correo:          str
-    password:        str
+    tipo_usuario:    str  # "cliente", "empleado", "administrador"
+    identificador:   str  # correo para clientes, idEmpleado para empleados, idAdmin para administradores
+    nombre:          str  # nombre para validación
 
 class RegisterRequest(BaseModel):
     idCliente:       int
     correo:          str
     nombre:          str
+
+# Modelos para diferentes tipos de administradores
+class AdminQuito(BaseModel):
+    idAdmin:         int
+    nombre:          str
+    correo:          str
+    idClinica:       int
+
+class AdminGuayaquil(BaseModel):
+    idAdmin:         int
+    nombre:          str
+    correo:          str
+    idClinica:       int
+
+# Modelo para vista unificada de empleados
+class EmpleadoView(BaseModel):
+    idEmpleado:      int
+    nombre:          str
+    direccion:       Optional[str]
+    salario:         Optional[float]
+    fechaContratacion: date
+    idClinica:       int
+    sede:            str  # "Quito" o "Guayaquil" determinado por idClinica

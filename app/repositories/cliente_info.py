@@ -55,6 +55,30 @@ class ClienteInfoRepository:
             if cursor:
                 cursor.close()
     
+    def get_by_email_and_name(self, correo: str, nombre: str) -> Optional[ClienteInfo]:
+        """Obtener cliente por correo y nombre (validación de login)"""
+        cursor = None
+        try:
+            cursor = self.db.cursor()
+            cursor.execute("SELECT idCliente, correo, nombre FROM Cliente_Info WHERE correo = ? AND nombre = ?", 
+                         (correo, nombre))
+            row = cursor.fetchone()
+            
+            if row:
+                return ClienteInfo(
+                    idCliente=row[0],
+                    correo=row[1],
+                    nombre=row[2]
+                )
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error validando cliente por correo y nombre {correo}, {nombre}: {e}")
+            raise
+        finally:
+            if cursor:
+                cursor.close()
+
     def get_by_id_and_email(self, idCliente: int, correo: str) -> Optional[ClienteInfo]:
         """Obtener cliente por ID y correo (validación de login)"""
         cursor = None

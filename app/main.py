@@ -41,34 +41,44 @@ def register_page():
 def admin():
     return FileResponse(STATIC_DIR / "frontend" / "admin.html")
 
-# 4) Panel de consultas
+# 6) Panel de empleados
+@app.get("/empleado", include_in_schema=False)
+def empleado():
+    return FileResponse(STATIC_DIR / "frontend" / "empleado.html")
+
+# 7) Panel de usuarios/clientes
+@app.get("/usuario", include_in_schema=False)
+def usuario():
+    return FileResponse(STATIC_DIR / "frontend" / "usuario.html")
+
+# 8) Panel de consultas
 @app.get("/consultas", include_in_schema=False)
 def consultas():
     return FileResponse(STATIC_DIR / "frontend" / "consultas.html")
 
-# 5) Panel de clientes
+# 9) Panel de clientes
 @app.get("/clientes", include_in_schema=False)
 def clientes():
     return FileResponse(STATIC_DIR / "frontend" / "clientes.html")
 
-# 6) API de autenticación
+# 10) API de autenticación
 from app.routers.auth import router as auth_router
 app.include_router(auth_router)
 
-# 7) Tu API de empleados
+# 11) Tu API de empleados
 from app.routers.empleado import router as empleado_router
 app.include_router(empleado_router)
 
-# 8) Tu API de consultas
+# 12) Tu API de consultas
 # … ya tienes mount("/static") y la ruta /admin …
 from app.routers.consulta import router as consulta_router
 app.include_router(consulta_router)
 
-# 9) Tu API de clientes
+# 13) Tu API de clientes
 from app.routers.cliente_contacto import router as cliente_router
 app.include_router(cliente_router)
 
-# 10) API de sistema (health check y conexiones)
+# 14) API de sistema (health check y conexiones)
 from app.routers.system import router as system_router
 app.include_router(system_router)
 

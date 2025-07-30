@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetRed - Panel de Empleado</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #50C878;
+            --text-dark: #2d3748;
+            --text-light: #718096;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #4A90E2 0%, #50C878 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Navigation */
+        .header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .doctor-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .doctor-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #4A90E2;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-inicio {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-inicio:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-cerrar {
+            background: rgba(255, 255, 255, 0.9);
+            color: #4A90E2;
+            border: 2px solid transparent;
+        }
+
+        .btn-cerrar:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Content */
+        .content-wrapper {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Consultation Interface */
+        .consultation-interface {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .consultation-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .section-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .consultation-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(248, 250, 252, 0.8);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            border-left: 4px solid #4A90E2;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .consultation-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .consultation-item.active {
+            border-left-color: #50C878;
+            background: rgba(80, 200, 120, 0.1);
+        }
+
+        .consultation-time {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .time-badge {
+            background: #4A90E2;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .consultation-item.active .time-badge {
+            background: #50C878;
+        }
+
+        .patient-info {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .pet-name {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-completado {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pendiente {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .details-form {
+            background: rgba(248, 250, 252, 0.5);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-field {
+            margin-bottom: 15px;
+        }
+
+        .field-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .field-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text-dark);
+        }
+
+        .field-input:focus {
+            outline: none;
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .field-textarea {
+            width: 100%;
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-pendiente {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-pendiente:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-guardar {
+            background: linear-gradient(135deg, #4A90E2, #50C878);
+            color: white;
+        }
+
+        .btn-guardar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .date-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .loading-message {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .consultation-interface {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .header-info {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .header-nav {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-nav">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    VETRED
+                </div>
+                <div class="header-info">
+                    <div class="doctor-info">
+                        <div class="doctor-avatar">
+                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='30' r='20' fill='%23A0522D'/><ellipse cx='50' cy='70' rx='30' ry='25' fill='%23228B22'/><circle cx='42' cy='25' r='2' fill='%23000'/><circle cx='58' cy='25' r='2' fill='%23000'/><path d='M 42 35 Q 50 40 58 35' stroke='%23000' stroke-width='2' fill='none'/></svg>" alt="Empleado Avatar" style="width: 40px; height: 40px; border-radius: 50%;">
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: white;" id="empleadoNombre">Cargando...</div>
+                            <div style="font-size: 0.8rem; color: rgba(255,255,255,0.8);" id="empleadoInfo">Cargando información...</div>
+                        </div>
+                    </div>
+                    <div class="clinic-info">
+                        <div style="font-weight: 600; color: white;" id="sedeInfo">VetRed</div>
+                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.8);" id="ubicacionInfo">Cargando...</div>
+                    </div>
+                    <div class="date-info">
+                        <i class="fas fa-calendar-alt" style="color: white;"></i>
+                        <span style="color: white; font-weight: 600;" id="fechaHoy"></span>
+                    </div>
+                </div>
+                <div class="nav-buttons">
+                    <a href="/login" class="nav-btn btn-inicio">Inicio</a>
+                    <a href="/login" class="nav-btn btn-cerrar">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Consultation Interface -->
+            <div class="consultation-interface">
+                <!-- Consultas de Hoy -->
+                <div class="consultation-section">
+                    <div class="section-header">
+                        <div>
+                            <h3 class="section-title">Consultas de Hoy</h3>
+                            <p class="section-subtitle" id="consultasCount">Cargando consultas...</p>
+                        </div>
+                    </div>
+                    
+                    <div id="consultasList">
+                        <div class="loading-message">
+                            <i class="fas fa-spinner fa-spin"></i> Cargando consultas...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detalles de Consulta -->
+                <div class="consultation-section">
+                    <div class="section-header">
+                        <div>
+                            <h3 class="section-title">Detalles de Consulta</h3>
+                            <p class="section-subtitle" id="consultationTime">Seleccione una consulta</p>
+                        </div>
+                    </div>
+                    
+                    <div class="date-info">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span id="fechaDetalle"></span>
+                    </div>
+                    
+                    <div class="details-form" id="consultaDetails" style="display: none;">
+                        <div id="messages"></div>
+                        
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label class="field-label">Cliente</label>
+                                <input type="text" class="field-input" id="clienteNombre" readonly>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Mascota</label>
+                                <input type="text" class="field-input" id="mascotaNombre" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label class="field-label">Tipo</label>
+                                <input type="text" class="field-input" id="mascotaTipo" readonly>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">ID Mascota</label>
+                                <input type="text" class="field-input" id="mascotaId" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="form-field">
+                            <label class="field-label">Motivo de Consulta</label>
+                            <input type="text" class="field-input" id="motivoConsulta">
+                        </div>
+                        
+                        <div class="form-field">
+                            <label class="field-label">Observaciones</label>
+                            <textarea class="field-input field-textarea" id="observaciones" placeholder="Agregar observaciones sobre la consulta..."></textarea>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn-action btn-pendiente" id="btnEstado">Pendiente</button>
+                            <button class="btn-action btn-guardar" id="btnGuardar">Guardar observaciones</button>
+                        </div>
+                    </div>
+                    
+                    <div id="noConsultaSelected" class="loading-message">
+                        Seleccione una consulta para ver los detalles
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let selectedConsultation = null;
+        let consultasData = [];
+
+        // Cargar información del usuario desde localStorage
+        function loadUserInfo() {
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
+                window.location.href = '/login';
+                return;
+            }
+            
+            currentUser = JSON.parse(userStr);
+            
+            // Verificar que sea un empleado
+            if (currentUser.tipo !== 'empleado') {
+                alert('Acceso denegado. Esta página es solo para empleados.');
+                window.location.href = '/login';
+                return;
+            }
+            
+            // Actualizar información en la interfaz
+            document.getElementById('empleadoNombre').textContent = currentUser.nombre;
+            document.getElementById('empleadoInfo').textContent = `ID: ${currentUser.idEmpleado} • Empleado`;
+            document.getElementById('sedeInfo').textContent = `VetRed Sede ${currentUser.sede}`;
+            document.getElementById('ubicacionInfo').textContent = `${currentUser.sede}, Ecuador`;
+            
+            // Mostrar fecha actual
+            const hoy = new Date();
+            document.getElementById('fechaHoy').textContent = hoy.toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('fechaDetalle').textContent = hoy.toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Cargar consultas del empleado
+        async function loadConsultas() {
+            if (!currentUser) return;
+            
+            try {
+                const response = await fetch(`/api/empleados/${currentUser.idEmpleado}/consultas-hoy`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    consultasData = data.consultas || [];
+                    renderConsultas();
+                } else {
+                    showError('Error cargando consultas: ' + (data.detail || 'Error desconocido'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error de conexión al cargar consultas');
+            }
+        }
+
+        // Renderizar lista de consultas
+        function renderConsultas() {
+            const consultasList = document.getElementById('consultasList');
+            const consultasCount = document.getElementById('consultasCount');
+            
+            if (consultasData.length === 0) {
+                consultasList.innerHTML = '<div class="loading-message">No hay consultas programadas para hoy</div>';
+                consultasCount.textContent = 'Sin consultas programadas';
+                return;
+            }
+            
+            consultasCount.textContent = `${consultasData.length} consultas programadas`;
+            
+            const consultasHtml = consultasData.map((consulta, index) => `
+                <div class="consultation-item" onclick="selectConsultation(${index})" data-id="${consulta.idConsulta}">
+                    <div class="consultation-time">
+                        <div class="time-badge">${consulta.hora}</div>
+                        <div>
+                            <div class="patient-info">${consulta.cliente_nombre}</div>
+                            <div class="pet-name">${consulta.mascota_nombre} (${consulta.mascota_tipo})</div>
+                        </div>
+                    </div>
+                    <div class="status-badge status-${consulta.estado.toLowerCase()}">${consulta.estado}</div>
+                </div>
+            `).join('');
+            
+            consultasList.innerHTML = consultasHtml;
+        }
+
+        // Seleccionar consulta
+        function selectConsultation(index) {
+            // Remove active class from all items
+            document.querySelectorAll('.consultation-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked item
+            event.currentTarget.classList.add('active');
+            
+            selectedConsultation = consultasData[index];
+            
+            // Show consultation details
+            document.getElementById('consultaDetails').style.display = 'block';
+            document.getElementById('noConsultaSelected').style.display = 'none';
+            
+            // Update consultation details
+            document.getElementById('consultationTime').textContent = 
+                `${selectedConsultation.hora} - ${selectedConsultation.cliente_nombre}`;
+            
+            // Fill form fields
+            document.getElementById('clienteNombre').value = selectedConsultation.cliente_nombre;
+            document.getElementById('mascotaNombre').value = selectedConsultation.mascota_nombre;
+            document.getElementById('mascotaTipo').value = selectedConsultation.mascota_tipo;
+            document.getElementById('mascotaId').value = selectedConsultation.idMascota;
+            document.getElementById('motivoConsulta').value = selectedConsultation.motivo;
+            document.getElementById('observaciones').value = selectedConsultation.observaciones || '';
+            
+            // Update status button
+            const btnEstado = document.getElementById('btnEstado');
+            btnEstado.textContent = selectedConsultation.estado;
+            btnEstado.style.background = selectedConsultation.estado === 'Completado' ? '#28a745' : '#6c757d';
+        }
+
+        // Guardar observaciones
+        async function guardarObservaciones() {
+            if (!selectedConsultation) return;
+            
+            const observaciones = document.getElementById('observaciones').value;
+            
+            try {
+                const response = await fetch(`/api/empleados/consultas/${selectedConsultation.idConsulta}/observaciones`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ observaciones: observaciones })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showSuccess('Observaciones guardadas exitosamente');
+                    selectedConsultation.observaciones = observaciones;
+                } else {
+                    showError('Error guardando observaciones: ' + (data.detail || 'Error desconocido'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error de conexión al guardar observaciones');
+            }
+        }
+
+        // Cambiar estado de consulta
+        async function cambiarEstado() {
+            if (!selectedConsultation) return;
+            
+            const nuevoEstado = selectedConsultation.estado === 'Pendiente' ? 'Completado' : 'Pendiente';
+            
+            try {
+                const response = await fetch(`/api/empleados/consultas/${selectedConsultation.idConsulta}/estado`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ estado: nuevoEstado })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showSuccess(`Estado cambiado a ${nuevoEstado}`);
+                    selectedConsultation.estado = nuevoEstado;
+                    
+                    // Update button
+                    const btnEstado = document.getElementById('btnEstado');
+                    btnEstado.textContent = nuevoEstado;
+                    btnEstado.style.background = nuevoEstado === 'Completado' ? '#28a745' : '#6c757d';
+                    
+                    // Update status badge in list
+                    const activeItem = document.querySelector('.consultation-item.active .status-badge');
+                    if (activeItem) {
+                        activeItem.textContent = nuevoEstado;
+                        activeItem.className = `status-badge status-${nuevoEstado.toLowerCase()}`;
+                    }
+                } else {
+                    showError('Error cambiando estado: ' + (data.detail || 'Error desconocido'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error de conexión al cambiar estado');
+            }
+        }
+
+        // Mostrar mensajes
+        function showMessage(message, type) {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = `<div class="${type}-message">${message}</div>`;
+            setTimeout(() => {
+                messagesDiv.innerHTML = '';
+            }, 3000);
+        }
+
+        function showSuccess(message) {
+            showMessage(message, 'success');
+        }
+
+        function showError(message) {
+            showMessage(message, 'error');
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserInfo();
+            loadConsultas();
+            
+            // Guardar observaciones
+            document.getElementById('btnGuardar').addEventListener('click', guardarObservaciones);
+            
+            // Cambiar estado
+            document.getElementById('btnEstado').addEventListener('click', cambiarEstado);
+        });
+
+        // Animación de entrada
+        window.addEventListener('load', function() {
+            document.querySelectorAll('.consultation-section').forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    section.style.transition = 'all 0.6s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 300);
+            });
+        });
+    </script>
+</body>
+</html>
