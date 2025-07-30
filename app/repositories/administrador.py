@@ -12,6 +12,8 @@ class AdministradorRepository:
 
     def authenticate_admin_quito(self, id_admin: int, nombre: str) -> Optional[AdminQuito]:
         """Autenticar administrador en la sede de Quito"""
+        conn = None
+        cursor = None
         try:
             conn = self.db_router.get_auth_db()  # Conexión a Quito
             cursor = conn.cursor()
@@ -38,11 +40,15 @@ class AdministradorRepository:
             logger.error(f"Error autenticando admin Quito: {e}")
             return None
         finally:
-            if 'conn' in locals():
+            if cursor:
+                cursor.close()
+            if conn:
                 conn.close()
 
     def authenticate_admin_guayaquil(self, id_admin: int, nombre: str) -> Optional[AdminGuayaquil]:
         """Autenticar administrador en la sede de Guayaquil"""
+        conn = None
+        cursor = None
         try:
             conn = self.db_router.get_cliente_contacto_db()  # Conexión a Guayaquil
             cursor = conn.cursor()
@@ -69,7 +75,9 @@ class AdministradorRepository:
             logger.error(f"Error autenticando admin Guayaquil: {e}")
             return None
         finally:
-            if 'conn' in locals():
+            if cursor:
+                cursor.close()
+            if conn:
                 conn.close()
 
     def authenticate_admin(self, id_admin: int, nombre: str, sede: str = None) -> Optional[dict]:

@@ -29,7 +29,7 @@
                     <i class="fas fa-user-friends"></i>
                     Clientes
                 </a>
-                <a href="../index.html" class="nav-item">
+                <a href="/login" class="nav-item">
                     <i class="fas fa-sign-out-alt"></i>
                     Cerrar Sesión
                 </a>
@@ -42,15 +42,15 @@
             <div class="content-header">
                 <div>
                     <h1>Clientes</h1>
-                    <p>Gestión de Información de Contacto de Clientes</p>
+                    <p id="sede-info">Gestión de Información de Contacto de Clientes - Sede: <span id="sede-actual">Cargando...</span></p>
                 </div>
                 <div class="user-info">
                     <div class="user-avatar">
                         <i class="fas fa-user"></i>
                     </div>
                     <div class="user-details">
-                        <h3>Christian Puchaicela</h3>
-                        <p>admin@vetclinic.com</p>
+                        <h3 id="admin-nombre">Administrador</h3>
+                        <p id="admin-correo">admin@vetclinic.com</p>
                     </div>
                 </div>
             </div>
@@ -60,14 +60,12 @@
                 <div class="section-header">
                     <div class="section-title">
                         <h2>Lista de Clientes</h2>
-                        <p>Administre la información de contacto de los clientes</p>
+                        <p id="section-description">Administre la información de contacto de los clientes</p>
                     </div>
-                    <!-- 
                     <button class="btn-add" onclick="agregarCliente()">
                         <i class="fas fa-plus"></i>
                         Agregar Cliente
                     </button>
-                    -->
                 </div>
 
                 <table class="employees-table">
@@ -123,26 +121,71 @@
         let originalIdCliente = null;
         let originalCorreo = null;
 
-        // 1) Al cargar la página
-        window.addEventListener("DOMContentLoaded", cargarClientes);
+        // Al cargar la página, actualizar información del usuario
+        window.addEventListener("DOMContentLoaded", function() {
+            actualizarInfoUsuario();
+            cargarClientes();
+        });
+
+        function actualizarInfoUsuario() {
+            try {
+                const userData = localStorage.getItem('user');
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    
+                    // Actualizar información en el header si existe
+                    const adminNombre = document.getElementById('admin-nombre');
+                    const adminCorreo = document.getElementById('admin-correo');
+                    const sedeActual = document.getElementById('sede-actual');
+                    
+                    if (adminNombre && user.nombre) {
+                        adminNombre.textContent = user.nombre;
+                    }
+                    if (adminCorreo && user.correo) {
+                        adminCorreo.textContent = user.correo;
+                    }
+                    if (sedeActual && user.sede) {
+                        sedeActual.textContent = user.sede;
+                    }
+                }
+            } catch (e) {
+                console.error('Error al cargar información del usuario:', e);
+            }
+        }
 
         async function cargarClientes() {
             try {
                 console.log("Iniciando carga de clientes...");
-                const res = await fetch(API);
+                
+                // Obtener información del usuario del localStorage
+                const userData = localStorage.getItem('user');
+                let sedeAdmin = 'Quito'; // Por defecto
+                
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    if (user.sede) {
+                        sedeAdmin = user.sede;
+                    }
+                }
+                
+                console.log("Sede del administrador:", sedeAdmin);
+                
+                // Incluir sede_admin como parámetro en la URL
+                const url = `${API}?sede_admin=${encodeURIComponent(sedeAdmin)}`;
+                const res = await fetch(url);
                 
                 if (!res.ok) {
                     throw new Error(`HTTP error! status: ${res.status}`);
                 }
                 
                 const lista = await res.json();
-                console.log("Clientes cargados:", lista);
+                console.log("Clientes cargados para sede", sedeAdmin, ":", lista);
                 
                 const tbody = document.getElementById("clientes-tbody");
                 tbody.innerHTML = "";
                 
                 if (lista.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5">No hay clientes registrados</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5">No hay clientes registrados para la sede ${sedeAdmin}</td></tr>`;
                     return;
                 }
                 

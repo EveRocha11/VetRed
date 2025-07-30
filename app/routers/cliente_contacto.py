@@ -7,9 +7,10 @@ router = APIRouter(prefix="/api/clientes", tags=["Clientes"])
 repo = ClienteContactoRepository()
 
 @router.get("/", response_model=List[ClienteContacto])
-def get_clientes():
+def get_clientes(sede_admin: str = "Quito"):
+    """Obtener clientes filtrados por sede usando vista o tabla"""
     try:
-        return repo.list()
+        return repo.list(sede_admin=sede_admin)
     except Exception as e:
         print(f"Error en get_clientes: {e}")
         raise HTTPException(status_code=500, detail="Error interno del servidor")

@@ -18,28 +18,28 @@ class ConsultaRepository:
         """Listar consultas usando la vista dbo.Consulta con filtro por sede"""
         try:
             import pyodbc
-            from ..config import ConfigQuito, ConfigGuayaquil
+            from ..config import ConfigQuito
             
-            # Determinar qué base de datos usar según la sede del admin
-            if sede_admin == "Quito":
-                conn = pyodbc.connect(ConfigQuito.conn_str())
-                id_clinica_filter = 1  # Quito = idClinica 1
-            elif sede_admin == "Guayaquil":
-                conn = pyodbc.connect(ConfigGuayaquil.conn_str())
+            # Usar siempre la conexión de Quito (que tiene acceso a ambas sedes)
+            conn = pyodbc.connect(ConfigQuito.conn_str())
+            
+            # Determinar el idClinica según la sede del admin
+            if sede_admin == "Guayaquil":
                 id_clinica_filter = 2  # Guayaquil = idClinica 2
             else:
-                # Por defecto usar Quito
-                conn = pyodbc.connect(ConfigQuito.conn_str())
-                id_clinica_filter = 1
+                id_clinica_filter = 1  # Quito = idClinica 1 (por defecto)
             
             cursor = conn.cursor()
             
             # Usar la vista dbo.Consulta con filtro por idClinica
             query = "SELECT * FROM dbo.Consulta WHERE idClinica = ?"
+            logger.info(f"Consultando consultas para sede {sede_admin} (idClinica={id_clinica_filter})")
             cursor.execute(query, (id_clinica_filter,))
             
             cols = [c[0] for c in cursor.description]
             rows = cursor.fetchall()
+            
+            logger.info(f"Encontradas {len(rows)} consultas para sede {sede_admin}")
             
             consultas = []
             for row in rows:

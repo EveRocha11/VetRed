@@ -29,7 +29,7 @@
                     <i class="fas fa-user-friends"></i>
                     Clientes
                 </a>
-                <a href="../index.html" class="nav-item">
+                <a href="/login" class="nav-item">
                     <i class="fas fa-sign-out-alt"></i>
                     Cerrar Sesión
                 </a>
@@ -42,15 +42,15 @@
             <div class="content-header">
                 <div>
                     <h1>Empleados</h1>
-                    <p>Gestión de Empleados</p>
+                    <p id="sede-info">Gestión de Empleados - Sede: <span id="sede-actual">Cargando...</span></p>
                 </div>
                 <div class="user-info">
                     <div class="user-avatar">
                         <i class="fas fa-user"></i>
                     </div>
                     <div class="user-details">
-                        <h3>Christian Puchaicela</h3>
-                        <p>admin@vetclinic.com</p>
+                        <h3 id="admin-nombre">Administrador</h3>
+                        <p id="admin-correo">admin@vetclinic.com</p>
                     </div>
                 </div>
             </div>
@@ -197,20 +197,61 @@
     <script>
   const API = "/api/empleados";
 
-  // 1) Al cargar la página
-  window.addEventListener("DOMContentLoaded", cargarEmpleados);
+  // Al cargar la página, actualizar información del usuario
+  window.addEventListener("DOMContentLoaded", function() {
+    actualizarInfoUsuario();
+    cargarEmpleados();
+  });
+
+  function actualizarInfoUsuario() {
+    try {
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        const user = JSON.parse(userData);
+        
+        // Actualizar información en el header
+        if (user.nombre) {
+          document.getElementById('admin-nombre').textContent = user.nombre;
+        }
+        if (user.correo) {
+          document.getElementById('admin-correo').textContent = user.correo;
+        }
+        if (user.sede) {
+          document.getElementById('sede-actual').textContent = user.sede;
+        }
+      }
+    } catch (e) {
+      console.error('Error al cargar información del usuario:', e);
+    }
+  }
 
   async function cargarEmpleados() {
     try {
       console.log("Iniciando carga de empleados...");
-      const res = await fetch(API);
+      
+      // Obtener información del usuario del localStorage
+      const userData = localStorage.getItem('user');
+      let sedeAdmin = 'Quito'; // Por defecto
+      
+      if (userData) {
+        const user = JSON.parse(userData);
+        if (user.sede) {
+          sedeAdmin = user.sede;
+        }
+      }
+      
+      console.log("Sede del administrador:", sedeAdmin);
+      
+      // Incluir sede_admin como parámetro en la URL
+      const url = `${API}?sede_admin=${encodeURIComponent(sedeAdmin)}`;
+      const res = await fetch(url);
       
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       
       const lista = await res.json();
-      console.log("Empleados cargados:", lista);
+      console.log("Empleados cargados para sede", sedeAdmin, ":", lista);
       
       const tbody = document.getElementById("empleados-tbody");
       tbody.innerHTML = "";
