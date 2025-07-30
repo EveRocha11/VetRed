@@ -176,40 +176,31 @@ class EmpleadoRepository:
             return None
 
     def create(self, e: Empleado) -> Empleado:
-        """Crear empleado usando conexión directa según la sede"""
+        """Crear empleado usando la vista dbo.Empleado"""
         conn = None
         cursor = None
         try:
             import pyodbc
             from ..config import ConfigQuito, ConfigGuayaquil
-            
             # Determinar qué conexión usar según idClinica
             if e.idClinica == 2:  # Guayaquil
                 conn = pyodbc.connect(ConfigGuayaquil.conn_str())
             else:  # Quito (idClinica == 1 o por defecto)
                 conn = pyodbc.connect(ConfigQuito.conn_str())
-            
             cursor = conn.cursor()
-            
-            # Insertar en la tabla base correspondiente
+            # Activar XACT_ABORT para evitar errores con linked server
+            cursor.execute("SET XACT_ABORT ON")
+            # Insertar usando la vista dbo.Empleado
             sql = """
-              INSERT INTO Empleado_Quito
-                (idEmpleado,nombre,direccion,salario,fechaContratacion,idClinica)
-              VALUES (?,?,?,?,?,?)
-            """ if e.idClinica != 2 else """
-              INSERT INTO Empleado_Guayaquil
-                (idEmpleado,nombre,direccion,salario,fechaContratacion,idClinica)
-              VALUES (?,?,?,?,?,?)
+              INSERT INTO dbo.Empleado
+                (idEmpleado, nombre, direccion, salario, fechaContratacion, idClinica)
+              VALUES (?, ?, ?, ?, ?, ?)
             """
-            
             logger.info(f"Creando empleado {e.idEmpleado} en sede {('Guayaquil' if e.idClinica == 2 else 'Quito')}")
             cursor.execute(sql, e.idEmpleado, e.nombre, e.direccion, e.salario, e.fechaContratacion, e.idClinica)
-            
             conn.commit()
             logger.info(f"Empleado {e.idEmpleado} creado exitosamente")
-            
             return e
-            
         except Exception as e:
             logger.error(f"Error en create(): {e}")
             if conn:
@@ -222,54 +213,38 @@ class EmpleadoRepository:
                 conn.close()
 
     def update(self, e: Empleado) -> Empleado:
-        """Actualizar empleado usando conexión directa según la sede"""
+        """Actualizar empleado usando la vista dbo.Empleado"""
         conn = None
         cursor = None
         try:
             import pyodbc
             from ..config import ConfigQuito, ConfigGuayaquil
-            
             # Determinar qué conexión usar según idClinica
             if e.idClinica == 2:  # Guayaquil
                 conn = pyodbc.connect(ConfigGuayaquil.conn_str())
             else:  # Quito (idClinica == 1 o por defecto)
                 conn = pyodbc.connect(ConfigQuito.conn_str())
-            
             cursor = conn.cursor()
-            
-            # Depuración: mostrar si el empleado existe en la tabla base antes del UPDATE
-            if e.idClinica == 2:
-                cursor.execute("SELECT * FROM Empleado_Guayaquil WHERE idEmpleado=? AND idClinica=?", e.idEmpleado, e.idClinica)
-                existe = cursor.fetchone()
-                logger.info(f"[DEBUG] Empleado en Empleado_Guayaquil: {existe}")
-            else:
-                cursor.execute("SELECT * FROM Empleado_Quito WHERE idEmpleado=? AND idClinica=?", e.idEmpleado, e.idClinica)
-                existe = cursor.fetchone()
-                logger.info(f"[DEBUG] Empleado en Empleado_Quito: {existe}")
-
-            # Actualizar en la tabla base correspondiente (usar también idClinica en el WHERE)
+            # Activar XACT_ABORT para evitar errores con linked server
+            cursor.execute("SET XACT_ABORT ON")
+            # Verificar si el empleado existe usando la vista
+            cursor.execute("SELECT * FROM dbo.Empleado WHERE idEmpleado=? AND idClinica=?", e.idEmpleado, e.idClinica)
+            existe = cursor.fetchone()
+            logger.info(f"[DEBUG] Empleado existe en vista dbo.Empleado: {existe is not None}")
+            # Actualizar usando la vista dbo.Empleado
             sql = """
-              UPDATE Empleado_Quito
-                 SET nombre=?, direccion=?, salario=?, fechaContratacion=?
-               WHERE idEmpleado=? AND idClinica=?
-            """ if e.idClinica != 2 else """
-              UPDATE Empleado_Guayaquil  
+              UPDATE dbo.Empleado
                  SET nombre=?, direccion=?, salario=?, fechaContratacion=?
                WHERE idEmpleado=? AND idClinica=?
             """
-            
             logger.info(f"Actualizando empleado {e.idEmpleado} en sede {('Guayaquil' if e.idClinica == 2 else 'Quito')}")
             cursor.execute(sql, e.nombre, e.direccion, e.salario, e.fechaContratacion, e.idEmpleado, e.idClinica)
-            
             # Verificar que se actualizó al menos una fila
             if cursor.rowcount == 0:
                 raise Exception(f"No se encontró el empleado {e.idEmpleado} para actualizar")
-            
             conn.commit()
             logger.info(f"Empleado {e.idEmpleado} actualizado exitosamente")
-            
             return e
-            
         except Exception as e:
             logger.error(f"Error en update(): {e}")
             if conn:
@@ -282,34 +257,29 @@ class EmpleadoRepository:
                 conn.close()
 
     def delete(self, idEmpleado: int, idClinica: int):
-        """Eliminar empleado usando conexión directa según la sede"""
+        """Eliminar empleado usando la vista dbo.Empleado"""
         conn = None
         cursor = None
         try:
             import pyodbc
             from ..config import ConfigQuito, ConfigGuayaquil
-            
             # Determinar qué conexión usar según idClinica
             if idClinica == 2:  # Guayaquil
                 conn = pyodbc.connect(ConfigGuayaquil.conn_str())
             else:  # Quito (idClinica == 1 o por defecto)
                 conn = pyodbc.connect(ConfigQuito.conn_str())
-            
             cursor = conn.cursor()
-            
-            # Eliminar de la tabla base correspondiente
-            sql = "DELETE FROM Empleado_Quito WHERE idEmpleado=?" if idClinica != 2 else "DELETE FROM Empleado_Guayaquil WHERE idEmpleado=?"
-            
+            # Activar XACT_ABORT para evitar errores con linked server
+            cursor.execute("SET XACT_ABORT ON")
+            # Eliminar usando la vista dbo.Empleado
+            sql = "DELETE FROM dbo.Empleado WHERE idEmpleado=? AND idClinica=?"
             logger.info(f"Eliminando empleado {idEmpleado} de sede {('Guayaquil' if idClinica == 2 else 'Quito')}")
-            cursor.execute(sql, idEmpleado)
-            
+            cursor.execute(sql, idEmpleado, idClinica)
             # Verificar que se eliminó al menos una fila
             if cursor.rowcount == 0:
                 raise Exception(f"No se encontró el empleado {idEmpleado} para eliminar")
-            
             conn.commit()
             logger.info(f"Empleado {idEmpleado} eliminado exitosamente")
-            
         except Exception as e:
             logger.error(f"Error en delete(): {e}")
             if conn:
