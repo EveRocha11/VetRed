@@ -127,29 +127,51 @@ class ConsultaRepository:
             return []
 
     def create(self, c: Consulta) -> Consulta:
+        """Crear consulta usando la vista dbo.Consulta"""
+        conn = None
+        cursor = None
         try:
-            db = self.get_consulta_db()
+            import pyodbc
+            from ..config import ConfigQuito, ConfigGuayaquil
+            
+            # Determinar qué conexión usar según idClinica
+            if c.idClinica == 2:  # Guayaquil
+                conn = pyodbc.connect(ConfigGuayaquil.conn_str())
+            else:  # Quito (idClinica == 1 o por defecto)
+                conn = pyodbc.connect(ConfigQuito.conn_str())
+            
+            cursor = conn.cursor()
+            
+            # Insertar usando la vista dbo.Consulta
             sql = """
-            INSERT INTO dbo.Consulta
-              (idConsulta, fecha, hora, motivo, estado, observaciones, idClinica, idEmpleado, idMascota)
-            VALUES (?,?,?,?,?,?,?,?,?)
+              INSERT INTO dbo.Consulta
+                (idConsulta, fecha, hora, motivo, estado, observaciones, idClinica, idEmpleado, idMascota)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
-            cur = db.cursor()
-            cur.execute(sql,
-                c.idConsulta, c.fecha, c.hora, c.motivo,
-                c.estado, c.observaciones, c.idClinica,
-                c.idEmpleado, c.idMascota
-            )
-            db.commit()
-            cur.close()
-            db.close()
+            
+            logger.info(f"Creando consulta {c.idConsulta} en sede {('Guayaquil' if c.idClinica == 2 else 'Quito')}")
+            cursor.execute(sql, c.idConsulta, c.fecha, c.hora, c.motivo,
+                         c.estado, c.observaciones, c.idClinica,
+                         c.idEmpleado, c.idMascota)
+            
+            conn.commit()
+            logger.info(f"Consulta {c.idConsulta} creada exitosamente")
+            
             return c
+            
         except Exception as e:
             logger.error(f"Error creando consulta: {e}")
+            if conn:
+                conn.rollback()
             raise
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
 
     def update_observaciones(self, idConsulta: int, observaciones: str) -> bool:
-        """Actualizar observaciones de una consulta usando la sede correcta"""
+        """Actualizar observaciones de una consulta usando la vista dbo.Consulta"""
         try:
             # Primero encontrar en qué sede está la consulta
             sede = self._find_consulta_sede(idConsulta)
@@ -161,15 +183,14 @@ class ConsultaRepository:
             if sede == "Quito":
                 from ..config import ConfigQuito
                 conn = pyodbc.connect(ConfigQuito.conn_str())
-                tabla = "Consulta_Quito"
             else:  # Guayaquil
                 from ..config import ConfigGuayaquil
                 conn = pyodbc.connect(ConfigGuayaquil.conn_str())
-                tabla = "Consulta_Guayaquil"
             
             cur = conn.cursor()
+            # Usar la vista dbo.Consulta en lugar de las tablas base
             cur.execute(
-                f"UPDATE {tabla} SET observaciones = ? WHERE idConsulta = ?",
+                "UPDATE dbo.Consulta SET observaciones = ? WHERE idConsulta = ?",
                 (observaciones, idConsulta)
             )
             rows_affected = cur.rowcount
@@ -189,7 +210,7 @@ class ConsultaRepository:
             return False
 
     def update_estado(self, idConsulta: int, estado: str) -> bool:
-        """Actualizar estado de una consulta usando la sede correcta"""
+        """Actualizar estado de una consulta usando la vista dbo.Consulta"""
         try:
             # Primero encontrar en qué sede está la consulta
             sede = self._find_consulta_sede(idConsulta)
@@ -201,15 +222,14 @@ class ConsultaRepository:
             if sede == "Quito":
                 from ..config import ConfigQuito
                 conn = pyodbc.connect(ConfigQuito.conn_str())
-                tabla = "Consulta_Quito"
             else:  # Guayaquil
                 from ..config import ConfigGuayaquil
                 conn = pyodbc.connect(ConfigGuayaquil.conn_str())
-                tabla = "Consulta_Guayaquil"
             
             cur = conn.cursor()
+            # Usar la vista dbo.Consulta en lugar de las tablas base
             cur.execute(
-                f"UPDATE {tabla} SET estado = ? WHERE idConsulta = ?",
+                "UPDATE dbo.Consulta SET estado = ? WHERE idConsulta = ?",
                 (estado, idConsulta)
             )
             rows_affected = cur.rowcount
@@ -228,8 +248,105 @@ class ConsultaRepository:
             logger.error(f"Error actualizando estado de consulta {idConsulta}: {e}")
             return False
 
+    def update(self, c: Consulta) -> Consulta:
+        """Actualizar consulta completa usando la vista dbo.Consulta"""
+        conn = None
+        cursor = None
+        try:
+            import pyodbc
+            from ..config import ConfigQuito, ConfigGuayaquil
+            
+            # Determinar qué conexión usar según idClinica
+            if c.idClinica == 2:  # Guayaquil
+                conn = pyodbc.connect(ConfigGuayaquil.conn_str())
+            else:  # Quito (idClinica == 1 o por defecto)
+                conn = pyodbc.connect(ConfigQuito.conn_str())
+            
+            cursor = conn.cursor()
+            
+            # Actualizar usando la vista dbo.Consulta
+            sql = """
+              UPDATE dbo.Consulta
+                 SET fecha=?, hora=?, motivo=?, estado=?, observaciones=?, idEmpleado=?, idMascota=? 
+               WHERE idConsulta=? AND idClinica=?
+            """
+            
+            logger.info(f"Actualizando consulta {c.idConsulta} en sede {('Guayaquil' if c.idClinica == 2 else 'Quito')}")
+            cursor.execute(sql, c.fecha, c.hora, c.motivo, c.estado, c.observaciones,
+                         c.idEmpleado, c.idMascota, c.idConsulta, c.idClinica)
+            
+            # Verificar que se actualizó al menos una fila
+            if cursor.rowcount == 0:
+                raise Exception(f"No se encontró la consulta {c.idConsulta} para actualizar")
+            
+            conn.commit()
+            logger.info(f"Consulta {c.idConsulta} actualizada exitosamente")
+            
+            return c
+            
+        except Exception as e:
+            logger.error(f"Error actualizando consulta: {e}")
+            if conn:
+                conn.rollback()
+            raise
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+
+    def delete(self, idConsulta: int, idClinica: int) -> bool:
+        """Eliminar consulta usando la vista dbo.Consulta"""
+        conn = None
+        cursor = None
+        try:
+            import pyodbc
+            from ..config import ConfigQuito, ConfigGuayaquil
+            
+            # Determinar qué conexión usar según idClinica
+            if idClinica == 2:  # Guayaquil
+                conn = pyodbc.connect(ConfigGuayaquil.conn_str())
+            else:  # Quito (idClinica == 1 o por defecto)
+                conn = pyodbc.connect(ConfigQuito.conn_str())
+            
+            cursor = conn.cursor()
+            
+            # Activar XACT_ABORT para evitar problemas con transacciones anidadas
+            cursor.execute("SET XACT_ABORT ON")
+            
+            # Primero, verificar que la consulta existe
+            query_check = "SELECT COUNT(*) FROM dbo.Consulta WHERE idConsulta = ? AND idClinica = ?"
+            cursor.execute(query_check, (idConsulta, idClinica))
+            exists = cursor.fetchone()[0]
+
+            if exists == 0:
+                logger.error(f"Consulta {idConsulta} no encontrada para eliminar.")
+                return False  # No se encontró la consulta
+            
+            # Eliminar usando la vista dbo.Consulta
+            sql = "DELETE FROM dbo.Consulta WHERE idConsulta=? AND idClinica=?"
+            cursor.execute(sql, idConsulta, idClinica)
+            
+            # Verificar que se eliminó al menos una fila
+            if cursor.rowcount == 0:
+                return False  # No se encontró la consulta para eliminar
+            
+            conn.commit()
+            logger.info(f"Consulta {idConsulta} eliminada exitosamente")
+            return True
+        except Exception as e:
+            logger.error(f"Error eliminando consulta: {e}")
+            if conn:
+                conn.rollback()
+            return False
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+
     def _find_consulta_sede(self, idConsulta: int) -> Optional[str]:
-        """Encontrar en qué sede está una consulta específica"""
+        """Encontrar en qué sede está una consulta específica usando la vista dbo.Consulta"""
         try:
             import pyodbc
             from ..config import ConfigQuito, ConfigGuayaquil

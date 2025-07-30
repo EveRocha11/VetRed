@@ -154,164 +154,264 @@
     </div>
 
     <script>
-        const API = "/api/consultas";
+    const API = "/api/consultas";
 
-        // Al cargar la página, actualizar información del usuario
-        window.addEventListener("DOMContentLoaded", function() {
-            actualizarInfoUsuario();
-            cargarConsultas();
-        });
+    // Al cargar la página, actualizar información del usuario
+    window.addEventListener("DOMContentLoaded", function() {
+        actualizarInfoUsuario();
+        cargarConsultas();
+    });
 
-        function actualizarInfoUsuario() {
-            try {
-                const userData = localStorage.getItem('user');
-                if (userData) {
-                    const user = JSON.parse(userData);
-                    
-                    // Actualizar información en el header
-                    if (user.nombre) {
-                        document.getElementById('admin-nombre').textContent = user.nombre;
-                    }
-                    if (user.correo) {
-                        document.getElementById('admin-correo').textContent = user.correo;
-                    }
-                    if (user.sede) {
-                        document.getElementById('sede-actual').textContent = user.sede;
-                    }
+    function actualizarInfoUsuario() {
+        try {
+            const userData = localStorage.getItem('user');
+            if (userData) {
+                const user = JSON.parse(userData);
+                
+                // Actualizar información en el header
+                if (user.nombre) {
+                    document.getElementById('admin-nombre').textContent = user.nombre;
                 }
-            } catch (e) {
-                console.error('Error al cargar información del usuario:', e);
+                if (user.correo) {
+                    document.getElementById('admin-correo').textContent = user.correo;
+                }
+                if (user.sede) {
+                    document.getElementById('sede-actual').textContent = user.sede;
+                }
             }
+        } catch (e) {
+            console.error('Error al cargar información del usuario:', e);
         }
+    }
 
-        async function cargarConsultas() {
-            try {
-                console.log("Iniciando carga de consultas...");
-                
-                // Obtener información del usuario del localStorage
-                const userData = localStorage.getItem('user');
-                let sedeAdmin = 'Quito'; // Por defecto
-                
-                if (userData) {
-                    const user = JSON.parse(userData);
-                    if (user.sede) {
-                        sedeAdmin = user.sede;
-                    }
-                }
-                
-                console.log("Sede del administrador:", sedeAdmin);
-                
-                // Incluir sede_admin como parámetro en la URL
-                const url = `${API}?sede_admin=${encodeURIComponent(sedeAdmin)}`;
-                const res = await fetch(url);
-                
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                }
-                
-                const lista = await res.json();
-                console.log("Consultas cargadas para sede", sedeAdmin, ":", lista);
-                
-                const tbody = document.getElementById("consultas-tbody");
-                tbody.innerHTML = "";
-                
-                if (lista.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="9">No hay consultas registradas para la sede ${sedeAdmin}</td></tr>`;
-                    return;
-                }
-                
-                lista.forEach(consulta => {
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td>${consulta.idConsulta}</td>
-                        <td>${new Date(consulta.fecha).toLocaleDateString()}</td>
-                        <td>${consulta.hora}</td>
-                        <td>${consulta.motivo}</td>
-                        <td><span class="status-badge status-${consulta.estado.toLowerCase()}">${consulta.estado}</span></td>
-                        <td>Clínica ${consulta.idClinica}</td>
-                        <td>${consulta.idEmpleado}</td>
-                        <td>${consulta.idMascota}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-action btn-edit" onclick="editarConsulta(${consulta.idConsulta}, ${consulta.idClinica})">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn-action btn-delete" onclick="eliminarConsulta(${consulta.idConsulta}, ${consulta.idClinica})">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>`;
-                    tbody.appendChild(tr);
-                });
-            } catch (error) {
-                console.error("Error cargando consultas:", error);
-                const tbody = document.getElementById("consultas-tbody");
-                tbody.innerHTML = `<tr><td colspan="9">Error cargando consultas: ${error.message}</td></tr>`;
-            }
-        }
-
-        // 2) Agregar consulta
-        function agregarConsulta() {
-            document.getElementById("consultaModal").style.display = "flex";
-            document.getElementById("consultaForm").reset();
-        }
-
-        // 3) Cerrar modal
-        function cerrarModal() {
-            document.getElementById("consultaModal").style.display = "none";
-        }
-
-        // 4) Manejar envío del formulario
-        document.getElementById("consultaForm").addEventListener("submit", async function(e) {
-            e.preventDefault();
+    async function cargarConsultas() {
+        try {
+            console.log("Iniciando carga de consultas...");
             
-            try {
-                const formData = {
-                    idConsulta: parseInt(document.getElementById("idConsulta").value),
-                    fecha: document.getElementById("fecha").value,
-                    hora: document.getElementById("hora").value,
-                    motivo: document.getElementById("motivo").value,
-                    estado: document.getElementById("estado").value,
-                    observaciones: document.getElementById("observaciones").value,
-                    idClinica: parseInt(document.getElementById("idClinica").value),
-                    idEmpleado: parseInt(document.getElementById("idEmpleado").value),
-                    idMascota: parseInt(document.getElementById("idMascota").value)
-                };
-                
-                console.log("Enviando consulta:", formData);
-                
-                const response = await fetch(API, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+            // Obtener información del usuario del localStorage
+            const userData = localStorage.getItem('user');
+            let sedeAdmin = 'Quito'; // Por defecto
+            
+            if (userData) {
+                const user = JSON.parse(userData);
+                if (user.sede) {
+                    sedeAdmin = user.sede;
+                }
+            }
+            
+            console.log("Sede del administrador:", sedeAdmin);
+            
+            // Incluir sede_admin como parámetro en la URL
+            const url = `${API}?sede_admin=${encodeURIComponent(sedeAdmin)}`;
+            const res = await fetch(url);
+            
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            
+            const lista = await res.json();
+            console.log("Consultas cargadas para sede", sedeAdmin, ":", lista);
+            
+            const tbody = document.getElementById("consultas-tbody");
+            tbody.innerHTML = "";
+            
+            if (lista.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9">No hay consultas registradas para la sede ${sedeAdmin}</td></tr>`;
+                return;
+            }
+            
+            lista.forEach(consulta => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${consulta.idConsulta}</td>
+                    <td>${new Date(consulta.fecha).toLocaleDateString()}</td>
+                    <td>${consulta.hora}</td>
+                    <td>${consulta.motivo}</td>
+                    <td><span class="status-badge status-${consulta.estado.toLowerCase()}">${consulta.estado}</span></td>
+                    <td>Clínica ${consulta.idClinica}</td>
+                    <td>${consulta.idEmpleado}</td>
+                    <td>${consulta.idMascota}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-edit" onclick="editarConsulta(${consulta.idConsulta}, ${consulta.idClinica})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action btn-delete" onclick="eliminarConsulta(${consulta.idConsulta}, ${consulta.idClinica})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        } catch (error) {
+            console.error("Error cargando consultas:", error);
+            const tbody = document.getElementById("consultas-tbody");
+            tbody.innerHTML = `<tr><td colspan="9">Error cargando consultas: ${error.message}</td></tr>`;
+        }
+    }
+
+    // 2) Agregar consulta
+    function agregarConsulta() {
+        document.getElementById("consultaModal").style.display = "flex";
+        document.getElementById("consultaForm").reset();
+    }
+
+    // 3) Cerrar modal
+    function cerrarModal() {
+        document.getElementById("consultaModal").style.display = "none";
+    }
+
+    // 4) Manejar envío del formulario
+    document.getElementById("consultaForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+        
+        try {
+            const formData = {
+                idConsulta: parseInt(document.getElementById("idConsulta").value),
+                fecha: document.getElementById("fecha").value,
+                hora: document.getElementById("hora").value,
+                motivo: document.getElementById("motivo").value,
+                estado: document.getElementById("estado").value,
+                observaciones: document.getElementById("observaciones").value,
+                idClinica: parseInt(document.getElementById("idClinica").value),
+                idEmpleado: parseInt(document.getElementById("idEmpleado").value),
+                idMascota: parseInt(document.getElementById("idMascota").value)
+            };
+            
+            console.log("Enviando consulta:", formData);
+            
+            const response = await fetch(API, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`HTTP error! status: ${response.status}, details: ${JSON.stringify(errorData)}`);
+            }
+            
+            cerrarModal();
+            cargarConsultas();
+            alert("Consulta agregada exitosamente");
+        } catch (error) {
+            console.error("Error agregando consulta:", error);
+            alert("Error agregando consulta: " + error.message);
+        }
+    });
+
+    // 5) Funciones de edición y eliminación
+    let modoEdicion = false;
+    let consultaEditando = null;
+
+    async function editarConsulta(idConsulta, idClinica) {
+        try {
+            // Obtener datos de la consulta a editar
+            const res = await fetch(`${API}/${idConsulta}/${idClinica}`);
+            if (!res.ok) throw new Error('No se pudo obtener la consulta');
+            const consulta = await res.json();
+
+            // Llenar el formulario con los datos
+            document.getElementById("idConsulta").value = consulta.idConsulta;
+            document.getElementById("fecha").value = consulta.fecha;
+            document.getElementById("hora").value = consulta.hora;
+            document.getElementById("motivo").value = consulta.motivo;
+            document.getElementById("estado").value = consulta.estado;
+            document.getElementById("observaciones").value = consulta.observaciones || '';
+            document.getElementById("idClinica").value = consulta.idClinica;
+            document.getElementById("idEmpleado").value = consulta.idEmpleado;
+            document.getElementById("idMascota").value = consulta.idMascota;
+
+            // Bloquear idConsulta y idClinica para evitar cambios
+            document.getElementById("idConsulta").readOnly = true;
+            document.getElementById("idClinica").disabled = true;
+
+            modoEdicion = true;
+            consultaEditando = { idConsulta, idClinica };
+
+            document.getElementById("consultaModal").style.display = "flex";
+        } catch (error) {
+            alert("Error al cargar la consulta: " + error.message);
+        }
+    }
+
+    async function eliminarConsulta(idConsulta, idClinica) {
+        if (!confirm("¿Estás seguro de eliminar esta consulta?")) return;
+        try {
+            const res = await fetch(`${API}/${idConsulta}/${idClinica}`, {
+                method: "DELETE"
+            });
+            if (!res.ok) throw new Error('No se pudo eliminar la consulta');
+            cargarConsultas();
+            alert("Consulta eliminada exitosamente");
+        } catch (error) {
+            alert("Error eliminando consulta: " + error.message);
+        }
+    }
+
+    // Modificar el submit para soportar edición
+    document.getElementById("consultaForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+        try {
+            const formData = {
+                idConsulta: parseInt(document.getElementById("idConsulta").value),
+                fecha: document.getElementById("fecha").value,
+                hora: document.getElementById("hora").value,
+                motivo: document.getElementById("motivo").value,
+                estado: document.getElementById("estado").value,
+                observaciones: document.getElementById("observaciones").value,
+                idClinica: parseInt(document.getElementById("idClinica").value),
+                idEmpleado: parseInt(document.getElementById("idEmpleado").value),
+                idMascota: parseInt(document.getElementById("idMascota").value)
+            };
+
+            let response;
+            if (modoEdicion && consultaEditando) {
+                // PUT para actualizar
+                response = await fetch(`${API}/${consultaEditando.idConsulta}/${consultaEditando.idClinica}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(formData)
                 });
-                
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`HTTP error! status: ${response.status}, details: ${JSON.stringify(errorData)}`);
-                }
-                
-                cerrarModal();
-                cargarConsultas();
-                alert("Consulta agregada exitosamente");
-            } catch (error) {
-                console.error("Error agregando consulta:", error);
-                alert("Error agregando consulta: " + error.message);
+            } else {
+                // POST para crear
+                response = await fetch(API, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
+                });
             }
-        });
 
-        // 5) Funciones placeholder para editar y eliminar
-        function editarConsulta(idConsulta, idClinica) {
-            console.log("Editar consulta:", idConsulta, idClinica);
-            // TODO: Implementar edición
-        }
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`HTTP error! status: ${response.status}, details: ${JSON.stringify(errorData)}`);
+            }
 
-        function eliminarConsulta(idConsulta, idClinica) {
-            console.log("Eliminar consulta:", idConsulta, idClinica);
-            // TODO: Implementar eliminación
+            cerrarModal();
+            cargarConsultas();
+            alert(modoEdicion ? "Consulta actualizada exitosamente" : "Consulta agregada exitosamente");
+        } catch (error) {
+            alert("Error guardando consulta: " + error.message);
+        } finally {
+            // Restaurar estado del formulario
+            modoEdicion = false;
+            consultaEditando = null;
+            document.getElementById("idConsulta").readOnly = false;
+            document.getElementById("idClinica").disabled = false;
         }
-    </script>
+    });
+
+    // Al cerrar el modal, restaurar estado
+    function cerrarModal() {
+        document.getElementById("consultaModal").style.display = "none";
+        modoEdicion = false;
+        consultaEditando = null;
+        document.getElementById("idConsulta").readOnly = false;
+        document.getElementById("idClinica").disabled = false;
+    }
+</script>
+
 </body>
 </html>
