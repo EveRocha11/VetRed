@@ -176,52 +176,140 @@ class EmpleadoRepository:
             return None
 
     def create(self, e: Empleado) -> Empleado:
+        """Crear empleado usando conexión directa según la sede"""
+        conn = None
+        cursor = None
         try:
-            db = self.get_empleado_db()
+            import pyodbc
+            from ..config import ConfigQuito, ConfigGuayaquil
+            
+            # Determinar qué conexión usar según idClinica
+            if e.idClinica == 2:  # Guayaquil
+                conn = pyodbc.connect(ConfigGuayaquil.conn_str())
+            else:  # Quito (idClinica == 1 o por defecto)
+                conn = pyodbc.connect(ConfigQuito.conn_str())
+            
+            cursor = conn.cursor()
+            
+            # Insertar en la tabla base correspondiente
             sql = """
-              INSERT INTO dbo.Empleado
+              INSERT INTO Empleado_Quito
+                (idEmpleado,nombre,direccion,salario,fechaContratacion,idClinica)
+              VALUES (?,?,?,?,?,?)
+            """ if e.idClinica != 2 else """
+              INSERT INTO Empleado_Guayaquil
                 (idEmpleado,nombre,direccion,salario,fechaContratacion,idClinica)
               VALUES (?,?,?,?,?,?)
             """
-            cur = db.cursor()
-            cur.execute(sql,
-               e.idEmpleado, e.nombre, e.direccion, e.salario, e.fechaContratacion, e.idClinica)
-            cur.close()
-            db.close()
+            
+            logger.info(f"Creando empleado {e.idEmpleado} en sede {('Guayaquil' if e.idClinica == 2 else 'Quito')}")
+            cursor.execute(sql, e.idEmpleado, e.nombre, e.direccion, e.salario, e.fechaContratacion, e.idClinica)
+            
+            conn.commit()
+            logger.info(f"Empleado {e.idEmpleado} creado exitosamente")
+            
             return e
+            
         except Exception as e:
             logger.error(f"Error en create(): {e}")
+            if conn:
+                conn.rollback()
             raise
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
 
     def update(self, e: Empleado) -> Empleado:
+        """Actualizar empleado usando conexión directa según la sede"""
+        conn = None
+        cursor = None
         try:
-            db = self.get_empleado_db()
+            import pyodbc
+            from ..config import ConfigQuito, ConfigGuayaquil
+            
+            # Determinar qué conexión usar según idClinica
+            if e.idClinica == 2:  # Guayaquil
+                conn = pyodbc.connect(ConfigGuayaquil.conn_str())
+            else:  # Quito (idClinica == 1 o por defecto)
+                conn = pyodbc.connect(ConfigQuito.conn_str())
+            
+            cursor = conn.cursor()
+            
+            # Actualizar en la tabla base correspondiente
             sql = """
-              UPDATE dbo.Empleado
+              UPDATE Empleado_Quito
                  SET nombre=?, direccion=?, salario=?, fechaContratacion=?
-               WHERE idEmpleado=? AND idClinica=?
+               WHERE idEmpleado=?
+            """ if e.idClinica != 2 else """
+              UPDATE Empleado_Guayaquil  
+                 SET nombre=?, direccion=?, salario=?, fechaContratacion=?
+               WHERE idEmpleado=?
             """
-            cur = db.cursor()
-            cur.execute(sql,
-               e.nombre, e.direccion, e.salario, e.fechaContratacion, e.idEmpleado, e.idClinica)
-            cur.close()
-            db.close()
+            
+            logger.info(f"Actualizando empleado {e.idEmpleado} en sede {('Guayaquil' if e.idClinica == 2 else 'Quito')}")
+            cursor.execute(sql, e.nombre, e.direccion, e.salario, e.fechaContratacion, e.idEmpleado)
+            
+            # Verificar que se actualizó al menos una fila
+            if cursor.rowcount == 0:
+                raise Exception(f"No se encontró el empleado {e.idEmpleado} para actualizar")
+            
+            conn.commit()
+            logger.info(f"Empleado {e.idEmpleado} actualizado exitosamente")
+            
             return e
+            
         except Exception as e:
             logger.error(f"Error en update(): {e}")
+            if conn:
+                conn.rollback()
             raise
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
 
     def delete(self, idEmpleado: int, idClinica: int):
+        """Eliminar empleado usando conexión directa según la sede"""
+        conn = None
+        cursor = None
         try:
-            db = self.get_empleado_db()
-            sql = "DELETE FROM dbo.Empleado WHERE idEmpleado=? AND idClinica=?"
-            cur = db.cursor()
-            cur.execute(sql, idEmpleado, idClinica)
-            cur.close()
-            db.close()
+            import pyodbc
+            from ..config import ConfigQuito, ConfigGuayaquil
+            
+            # Determinar qué conexión usar según idClinica
+            if idClinica == 2:  # Guayaquil
+                conn = pyodbc.connect(ConfigGuayaquil.conn_str())
+            else:  # Quito (idClinica == 1 o por defecto)
+                conn = pyodbc.connect(ConfigQuito.conn_str())
+            
+            cursor = conn.cursor()
+            
+            # Eliminar de la tabla base correspondiente
+            sql = "DELETE FROM Empleado_Quito WHERE idEmpleado=?" if idClinica != 2 else "DELETE FROM Empleado_Guayaquil WHERE idEmpleado=?"
+            
+            logger.info(f"Eliminando empleado {idEmpleado} de sede {('Guayaquil' if idClinica == 2 else 'Quito')}")
+            cursor.execute(sql, idEmpleado)
+            
+            # Verificar que se eliminó al menos una fila
+            if cursor.rowcount == 0:
+                raise Exception(f"No se encontró el empleado {idEmpleado} para eliminar")
+            
+            conn.commit()
+            logger.info(f"Empleado {idEmpleado} eliminado exitosamente")
+            
         except Exception as e:
             logger.error(f"Error en delete(): {e}")
+            if conn:
+                conn.rollback()
             raise
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
 
 # Instancia global del repositorio
 empleado_repository = EmpleadoRepository()
