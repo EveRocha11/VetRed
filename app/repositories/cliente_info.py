@@ -1,17 +1,19 @@
 from typing import List, Optional
-from app.db import db_guayaquil
+from app.database_router import db_router
 from app.models import ClienteInfo
 import logging
 
 logger = logging.getLogger(__name__)
 
 class ClienteInfoRepository:
+    def __init__(self):
+        self.db = db_router.get_auth_db()
     
     def list(self) -> List[ClienteInfo]:
         """Obtener todos los clientes de Cliente_Info"""
         cursor = None
         try:
-            cursor = db_guayaquil.cursor()
+            cursor = self.db.cursor()
             cursor.execute("SELECT idCliente, correo, nombre FROM Cliente_Info")
             rows = cursor.fetchall()
             
@@ -34,7 +36,7 @@ class ClienteInfoRepository:
         """Obtener cliente por correo electrónico"""
         cursor = None
         try:
-            cursor = db_guayaquil.cursor()
+            cursor = self.db.cursor()
             cursor.execute("SELECT idCliente, correo, nombre FROM Cliente_Info WHERE correo = ?", (correo,))
             row = cursor.fetchone()
             
@@ -57,7 +59,7 @@ class ClienteInfoRepository:
         """Obtener cliente por ID y correo (validación de login)"""
         cursor = None
         try:
-            cursor = db_guayaquil.cursor()
+            cursor = self.db.cursor()
             cursor.execute("SELECT idCliente, correo, nombre FROM Cliente_Info WHERE idCliente = ? AND correo = ?", 
                          (idCliente, correo))
             row = cursor.fetchone()
@@ -81,16 +83,18 @@ class ClienteInfoRepository:
         """Crear nuevo cliente"""
         cursor = None
         try:
-            cursor = db_guayaquil.cursor()
+            cursor = self.db.cursor()
             cursor.execute(
                 "INSERT INTO Cliente_Info (idCliente, correo, nombre) VALUES (?, ?, ?)",
                 (cliente.idCliente, cliente.correo, cliente.nombre)
             )
-            cursor.commit()
+            self.db.commit()
             return cliente
             
         except Exception as e:
             logger.error(f"Error creando cliente info: {e}")
+            if cursor:
+                self.db.rollback()
             raise
         finally:
             if cursor:
@@ -100,7 +104,7 @@ class ClienteInfoRepository:
         """Verificar si existe un cliente con ID y correo específicos"""
         cursor = None
         try:
-            cursor = db_guayaquil.cursor()
+            cursor = self.db.cursor()
             cursor.execute("SELECT COUNT(*) FROM Cliente_Info WHERE idCliente = ? AND correo = ?", 
                          (idCliente, correo))
             count = cursor.fetchone()[0]

@@ -68,3 +68,7 @@ app.include_router(consulta_router)
 from app.routers.cliente_contacto import router as cliente_router
 app.include_router(cliente_router)
 
+# 10) API de sistema (health check y conexiones)
+from app.routers.system import router as system_router
+app.include_router(system_router)
+

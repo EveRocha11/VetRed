@@ -1,10 +1,10 @@
 from typing import List
-from ..db import db_guayaquil
+from ..database_router import db_router
 from ..models import Empleado
 
 class EmpleadoRepository:
     def __init__(self):
-        self.db = db_guayaquil
+        self.db = db_router.get_empleado_db()
 
     def list(self) -> List[Empleado]:
         try:

@@ -1,10 +1,10 @@
 from typing import List
-from ..db import db_guayaquil  # o tu conexión distribuida
+from ..database_router import db_router
 from ..models import Consulta
 
 class ConsultaRepository:
     def __init__(self):
-        self.db = db_guayaquil
+        self.db = db_router.get_consulta_db()
 
     def list(self) -> List[Consulta]:
         try:
