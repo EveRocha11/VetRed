@@ -26,3 +26,17 @@ class ClienteContacto(BaseModel):
     correo:          str
     direccion:       Optional[str] = None
     telefono:        Optional[str] = None
+
+class ClienteInfo(BaseModel):
+    idCliente:       int
+    correo:          str
+    nombre:          str
+
+class LoginRequest(BaseModel):
+    correo:          str
+    password:        str
+
+class RegisterRequest(BaseModel):
+    idCliente:       int
+    correo:          str
+    nombre:          str
