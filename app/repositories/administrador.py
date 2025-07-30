@@ -1,6 +1,6 @@
 from typing import Optional
 from app.models import AdminQuito, AdminGuayaquil
-from app.database_router import DatabaseRouter
+from app.config import ConfigQuito, ConfigGuayaquil
 import pyodbc
 import logging
 
@@ -8,14 +8,15 @@ logger = logging.getLogger(__name__)
 
 class AdministradorRepository:
     def __init__(self):
-        self.db_router = DatabaseRouter()
+        pass
 
     def authenticate_admin_quito(self, id_admin: int, nombre: str) -> Optional[AdminQuito]:
         """Autenticar administrador en la sede de Quito"""
         conn = None
         cursor = None
         try:
-            conn = self.db_router.get_auth_db()  # Conexión a Quito
+            # Crear nueva conexión cada vez
+            conn = pyodbc.connect(ConfigQuito.conn_str())
             cursor = conn.cursor()
             
             query = """
@@ -50,7 +51,8 @@ class AdministradorRepository:
         conn = None
         cursor = None
         try:
-            conn = self.db_router.get_cliente_contacto_db()  # Conexión a Guayaquil
+            # Crear nueva conexión cada vez
+            conn = pyodbc.connect(ConfigGuayaquil.conn_str())
             cursor = conn.cursor()
             
             query = """
