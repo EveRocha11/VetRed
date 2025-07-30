@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VetRed - Gestión de Clientes</title>
+    <title>VetRed - Clientes</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/frontend/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/static/frontend/css/clientes.css">
+    <link rel="stylesheet" href="/static/frontend/css/admin.css">
 </head>
 <body>
     <div class="admin-layout">
@@ -17,13 +17,13 @@
                 <h2><i class="fas fa-paw"></i> VETRET</h2>
             </div>
             <nav class="sidebar-nav">
-                <a href="admin.html" class="nav-item">
+                <a href="/admin" class="nav-item">
                     <i class="fas fa-users"></i>
                     Empleados
                 </a>
-                <a href="citas.html" class="nav-item">
+                <a href="/consultas" class="nav-item">
                     <i class="fas fa-calendar-alt"></i>
-                    Citas
+                    Consultas
                 </a>
                 <a href="#" class="nav-item active">
                     <i class="fas fa-user-friends"></i>
@@ -50,7 +50,7 @@
             <div class="content-header">
                 <div>
                     <h1>Clientes</h1>
-                    <p>Clientes y Mascotas</p>
+                    <p>Gestión de Información de Contacto de Clientes</p>
                 </div>
                 <div class="user-info">
                     <div class="user-avatar">
@@ -64,11 +64,11 @@
             </div>
 
             <!-- Clientes Section -->
-            <div class="clientes-section">
+            <div class="employees-section">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2>Clientes y Mascotas</h2>
-                        <p>Información de clientes registrados y sus mascotas</p>
+                        <h2>Lista de Clientes</h2>
+                        <p>Administre la información de contacto de los clientes</p>
                     </div>
                     <button class="btn-add" onclick="agregarCliente()">
                         <i class="fas fa-plus"></i>
@@ -76,162 +76,47 @@
                     </button>
                 </div>
 
-                <input type="text" class="search-bar" id="searchBar" placeholder="Buscar clientes por nombre, email o teléfono..." onkeyup="filtrarClientes()">
-
-                <div id="clientes-container">
-                    <!-- Cliente 1: Juan Pérez -->
-                    <div class="cliente-card" data-cliente="juan perez juan.perez@email.com +593 99 123 4567">
-                        <div class="cliente-header">
-                            <div class="cliente-info">
-                                <div class="cliente-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div class="cliente-datos">
-                                    <h3>Juan Pérez</h3>
-                                    <div class="cliente-contacto">juan.perez@email.com</div>
-                                    <div class="cliente-telefono">+593 99 123 4567</div>
-                                </div>
-                            </div>
-                            <div class="mascotas-badge">
-                                <i class="fas fa-paw"></i>
-                                2 mascotas
-                            </div>
-                        </div>
-                        
-                        <div class="mascotas-grid">
-                            <div class="mascota-card">
-                                <div class="mascota-header">
-                                    <span class="mascota-nombre">Max</span>
-                                </div>
-                                <div class="mascota-tipo">Perro - Golden Retriever - Macho</div>
-                                <div class="mascota-detalles">Café - 34 kg - 15/08/2024</div>
-                            </div>
-                            <div class="mascota-card">
-                                <div class="mascota-header">
-                                    <span class="mascota-nombre">Bella</span>
-                                </div>
-                                <div class="mascota-tipo">Gato - Persa - Hembra</div>
-                                <div class="mascota-detalles">Café - 7 kg - 15/08/2024</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Cliente 2: Ana Silva -->
-                    <div class="cliente-card" data-cliente="ana silva ana.silva@email.com +593 99 234 5678">
-                        <div class="cliente-header">
-                            <div class="cliente-info">
-                                <div class="cliente-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div class="cliente-datos">
-                                    <h3>Ana Silva</h3>
-                                    <div class="cliente-contacto">ana.silva@email.com</div>
-                                    <div class="cliente-telefono">+593 99 234 5678</div>
-                                </div>
-                            </div>
-                            <div class="mascotas-badge">
-                                <i class="fas fa-paw"></i>
-                                2 mascotas
-                            </div>
-                        </div>
-                        
-                        <div class="mascotas-grid">
-                            <div class="mascota-card">
-                                <div class="mascota-header">
-                                    <span class="mascota-nombre">Max</span>
-                                </div>
-                                <div class="mascota-tipo">Perro - Golden Retriever - Macho</div>
-                                <div class="mascota-detalles">Café - 34 kg - 15/08/2024</div>
-                            </div>
-                            <div class="mascota-card">
-                                <div class="mascota-header">
-                                    <span class="mascota-nombre">Bella</span>
-                                </div>
-                                <div class="mascota-tipo">Gato - Persa - Hembra</div>
-                                <div class="mascota-detalles">Café - 7 kg - 15/08/2024</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <table class="employees-table">
+                    <thead>
+                        <tr>
+                            <th>ID Cliente</th>
+                            <th>Correo Electrónico</th>
+                            <th>Dirección</th>
+                            <th>Teléfono</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientes-tbody">
+                        <!-- Los datos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <!-- Modal para agregar/editar cliente -->
     <div id="clienteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
-        <div style="background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 600px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto;">
-            <h3 style="margin-bottom: 20px; color: var(--text-dark); font-size: 1.5rem;">Agregar Cliente</h3>
+        <div style="background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+            <h3 id="modalTitle" style="margin-bottom: 20px; color: var(--text-dark); font-size: 1.5rem;">Agregar Cliente</h3>
             <form id="clienteForm">
                 <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Nombre:</label>
-                    <input type="text" id="nombreCliente" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">ID Cliente:</label>
+                    <input type="number" id="idCliente" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
                 </div>
                 <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Email:</label>
-                    <input type="email" id="emailCliente" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Correo Electrónico:</label>
+                    <input type="email" id="correo" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
                 </div>
                 <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Dirección:</label>
+                    <input type="text" id="direccion" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                </div>
+                <div style="margin-bottom: 30px;">
                     <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Teléfono:</label>
-                    <input type="tel" id="telefonoCliente" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                    <input type="tel" id="telefono" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
                 </div>
-                
-                <h4 style="margin: 25px 0 15px 0; color: var(--text-dark);">Mascotas</h4>
-                <div id="mascotasContainer">
-                    <div class="mascota-form" style="background: rgba(248, 250, 252, 0.8); padding: 20px; border-radius: 15px; margin-bottom: 15px;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                            <div>
-                                <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Nombre:</label>
-                                <input type="text" class="nombreMascota" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                            </div>
-                            <div>
-                                <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Tipo:</label>
-                                <select class="tipoMascota" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                                    <option value="">Seleccionar</option>
-                                    <option value="Perro">Perro</option>
-                                    <option value="Gato">Gato</option>
-                                    <option value="Ave">Ave</option>
-                                    <option value="Conejo">Conejo</option>
-                                    <option value="Otro">Otro</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                            <div>
-                                <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Raza:</label>
-                                <input type="text" class="razaMascota" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                            </div>
-                            <div>
-                                <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Sexo:</label>
-                                <select class="sexoMascota" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                                    <option value="">Seleccionar</option>
-                                    <option value="Macho">Macho</option>
-                                    <option value="Hembra">Hembra</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Peso (kg):</label>
-                                <input type="number" class="pesoMascota" step="0.1" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                            </div>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div>
-                                <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Color:</label>
-                                <input type="text" class="colorMascota" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                            </div>
-                            <div>
-                                <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Fecha de nacimiento:</label>
-                                <input type="date" class="fechaNacMascota" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <button type="button" onclick="agregarMascota()" style="padding: 10px 20px; background: rgba(79, 209, 197, 0.1); color: #4fd1c7; border: 2px solid #4fd1c7; border-radius: 10px; cursor: pointer; font-weight: 600; margin-bottom: 20px;">
-                    <i class="fas fa-plus"></i> Agregar otra mascota
-                </button>
-                
                 <div style="display: flex; gap: 15px; justify-content: flex-end;">
-                    <button type="button" onclick="cerrarModalCliente()" style="padding: 12px 24px; background: #e2e8f0; color: var(--text-dark); border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">Cancelar</button>
+                    <button type="button" onclick="cerrarModal()" style="padding: 12px 24px; background: #e2e8f0; color: var(--text-dark); border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">Cancelar</button>
                     <button type="submit" style="padding: 12px 24px; background: linear-gradient(45deg, #4fd1c7, #667eea); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">Guardar</button>
                 </div>
             </form>
@@ -239,182 +124,191 @@
     </div>
 
     <script>
+        const API = "/api/clientes";
+        let editMode = false;
+        let originalIdCliente = null;
+        let originalCorreo = null;
+
+        // 1) Al cargar la página
+        window.addEventListener("DOMContentLoaded", cargarClientes);
+
+        async function cargarClientes() {
+            try {
+                console.log("Iniciando carga de clientes...");
+                const res = await fetch(API);
+                
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                
+                const lista = await res.json();
+                console.log("Clientes cargados:", lista);
+                
+                const tbody = document.getElementById("clientes-tbody");
+                tbody.innerHTML = "";
+                
+                if (lista.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5">No hay clientes registrados</td></tr>`;
+                    return;
+                }
+                
+                lista.forEach(cliente => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${cliente.idCliente}</td>
+                        <td>${cliente.correo}</td>
+                        <td>${cliente.direccion || 'No especificada'}</td>
+                        <td>${cliente.telefono || 'No especificado'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-edit" onclick="editarCliente(${cliente.idCliente}, '${cliente.correo}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-action btn-delete" onclick="eliminarCliente(${cliente.idCliente}, '${cliente.correo}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>`;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error("Error cargando clientes:", error);
+                const tbody = document.getElementById("clientes-tbody");
+                tbody.innerHTML = `<tr><td colspan="5">Error cargando clientes: ${error.message}</td></tr>`;
+            }
+        }
+
+        // 2) Agregar cliente
         function agregarCliente() {
-            document.getElementById('clienteModal').style.display = 'flex';
-            document.getElementById('clienteForm').reset();
-        }
-
-        function cerrarModalCliente() {
-            document.getElementById('clienteModal').style.display = 'none';
-        }
-
-        function agregarMascota() {
-            const container = document.getElementById('mascotasContainer');
-            const nuevaMascota = document.createElement('div');
-            nuevaMascota.className = 'mascota-form';
-            nuevaMascota.style.cssText = 'background: rgba(248, 250, 252, 0.8); padding: 20px; border-radius: 15px; margin-bottom: 15px; position: relative;';
-            nuevaMascota.innerHTML = `
-                <button type="button" onclick="eliminarMascota(this)" style="position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: none; background: #f56565; color: white; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                    <div>
-                        <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Nombre:</label>
-                        <input type="text" class="nombreMascota" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Tipo:</label>
-                        <select class="tipoMascota" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                            <option value="">Seleccionar</option>
-                            <option value="Perro">Perro</option>
-                            <option value="Gato">Gato</option>
-                            <option value="Ave">Ave</option>
-                            <option value="Conejo">Conejo</option>
-                            <option value="Otro">Otro</option>
-                        </select>
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                    <div>
-                        <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Raza:</label>
-                        <input type="text" class="razaMascota" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Sexo:</label>
-                        <select class="sexoMascota" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                            <option value="">Seleccionar</option>
-                            <option value="Macho">Macho</option>
-                            <option value="Hembra">Hembra</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Peso (kg):</label>
-                        <input type="number" class="pesoMascota" step="0.1" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div>
-                        <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Color:</label>
-                        <input type="text" class="colorMascota" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Fecha de nacimiento:</label>
-                        <input type="date" class="fechaNacMascota" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                    </div>
-                </div>
-            `;
-            container.appendChild(nuevaMascota);
-        }
-
-        function eliminarMascota(btn) {
-            btn.closest('.mascota-form').remove();
-        }
-
-        function filtrarClientes() {
-            const filtro = document.getElementById('searchBar').value.toLowerCase();
-            const clientes = document.querySelectorAll('.cliente-card');
+            editMode = false;
+            originalIdCliente = null;
+            originalCorreo = null;
+            document.getElementById("modalTitle").textContent = "Agregar Cliente";
+            document.getElementById("clienteModal").style.display = "flex";
+            document.getElementById("clienteForm").reset();
             
-            clientes.forEach(cliente => {
-                const texto = cliente.getAttribute('data-cliente').toLowerCase();
-                if (texto.includes(filtro)) {
-                    cliente.style.display = 'block';
-                } else {
-                    cliente.style.display = 'none';
+            // Habilitar campos de clave primaria en modo agregar
+            document.getElementById("idCliente").disabled = false;
+            document.getElementById("correo").disabled = false;
+        }
+
+        // 3) Editar cliente
+        async function editarCliente(idCliente, correo) {
+            editMode = true;
+            originalIdCliente = idCliente;
+            originalCorreo = correo;
+            
+            // Buscar los datos del cliente en la tabla
+            const filas = document.querySelectorAll("#clientes-tbody tr");
+            let clienteData = null;
+            
+            filas.forEach(fila => {
+                const celdas = fila.querySelectorAll("td");
+                if (celdas.length > 0 && 
+                    parseInt(celdas[0].textContent) === idCliente && 
+                    celdas[1].textContent === correo) {
+                    clienteData = {
+                        idCliente: parseInt(celdas[0].textContent),
+                        correo: celdas[1].textContent,
+                        direccion: celdas[2].textContent === 'No especificada' ? '' : celdas[2].textContent,
+                        telefono: celdas[3].textContent === 'No especificado' ? '' : celdas[3].textContent
+                    };
                 }
             });
+            
+            if (clienteData) {
+                document.getElementById("modalTitle").textContent = "Editar Cliente";
+                document.getElementById("idCliente").value = clienteData.idCliente;
+                document.getElementById("correo").value = clienteData.correo;
+                document.getElementById("direccion").value = clienteData.direccion;
+                document.getElementById("telefono").value = clienteData.telefono;
+                
+                // Deshabilitar campos de clave primaria en modo editar
+                document.getElementById("idCliente").disabled = true;
+                document.getElementById("correo").disabled = true;
+                
+                document.getElementById("clienteModal").style.display = "flex";
+            }
         }
 
-        document.getElementById('clienteForm').addEventListener('submit', function(e) {
+        // 4) Eliminar cliente
+        async function eliminarCliente(idCliente, correo) {
+            if (!confirm(`¿Eliminar el cliente ${idCliente} con correo ${correo}?`)) return;
+            
+            try {
+                const response = await fetch(`${API}/${idCliente}/${encodeURIComponent(correo)}`, { 
+                    method: "DELETE" 
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                cargarClientes();
+                alert("Cliente eliminado exitosamente");
+            } catch (error) {
+                console.error("Error eliminando cliente:", error);
+                alert("Error eliminando cliente: " + error.message);
+            }
+        }
+
+        // 5) Cerrar modal
+        function cerrarModal() {
+            document.getElementById("clienteModal").style.display = "none";
+            editMode = false;
+            originalIdCliente = null;
+            originalCorreo = null;
+        }
+
+        // 6) Manejar envío del formulario
+        document.getElementById("clienteForm").addEventListener("submit", async function(e) {
             e.preventDefault();
             
-            const nombre = document.getElementById('nombreCliente').value;
-            const email = document.getElementById('emailCliente').value;
-            const telefono = document.getElementById('telefonoCliente').value;
-            
-            // Recopilar datos de mascotas
-            const mascotas = [];
-            const formasMascotas = document.querySelectorAll('.mascota-form');
-            
-            formasMascotas.forEach(forma => {
-                const nombreMascota = forma.querySelector('.nombreMascota').value;
-                const tipo = forma.querySelector('.tipoMascota').value;
-                const raza = forma.querySelector('.razaMascota').value;
-                const sexo = forma.querySelector('.sexoMascota').value;
-                const peso = forma.querySelector('.pesoMascota').value;
-                const color = forma.querySelector('.colorMascota').value;
-                const fechaNac = forma.querySelector('.fechaNacMascota').value;
+            try {
+                const formData = {
+                    idCliente: parseInt(document.getElementById("idCliente").value),
+                    correo: document.getElementById("correo").value,
+                    direccion: document.getElementById("direccion").value || null,
+                    telefono: document.getElementById("telefono").value || null
+                };
                 
-                if (nombreMascota && tipo && sexo) {
-                    mascotas.push({
-                        nombre: nombreMascota,
-                        tipo: tipo,
-                        raza: raza || 'Sin especificar',
-                        sexo: sexo,
-                        peso: peso || 'No especificado',
-                        color: color || 'No especificado',
-                        fechaNac: fechaNac || '15/08/2024'
+                console.log("Enviando cliente:", formData);
+                
+                let response;
+                if (editMode) {
+                    // Modo editar - usar PUT
+                    response = await fetch(API, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                } else {
+                    // Modo agregar - usar POST
+                    response = await fetch(API, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(formData)
                     });
                 }
-            });
-            
-            if (mascotas.length === 0) {
-                alert('Debe agregar al menos una mascota');
-                return;
-            }
-            
-            // Crear nueva tarjeta de cliente
-            const container = document.getElementById('clientes-container');
-            const nuevoCliente = document.createElement('div');
-            nuevoCliente.className = 'cliente-card';
-            nuevoCliente.setAttribute('data-cliente', `${nombre.toLowerCase()} ${email.toLowerCase()} ${telefono.toLowerCase()}`);
-            
-            let mascotasHTML = '';
-            mascotas.forEach(mascota => {
-                const fechaFormateada = mascota.fechaNac ? new Date(mascota.fechaNac).toLocaleDateString('es-ES').replace(/\//g, '/') : '15/08/2024';
-                mascotasHTML += `
-                    <div class="mascota-card">
-                        <div class="mascota-header">
-                            <span class="mascota-nombre">${mascota.nombre}</span>
-                        </div>
-                        <div class="mascota-tipo">${mascota.tipo} - ${mascota.raza} - ${mascota.sexo}</div>
-                        <div class="mascota-detalles">${mascota.color} - ${mascota.peso} kg - ${fechaFormateada}</div>
-                    </div>
-                `;
-            });
-            
-            nuevoCliente.innerHTML = `
-                <div class="cliente-header">
-                    <div class="cliente-info">
-                        <div class="cliente-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="cliente-datos">
-                            <h3>${nombre}</h3>
-                            <div class="cliente-contacto">${email}</div>
-                            <div class="cliente-telefono">${telefono}</div>
-                        </div>
-                    </div>
-                    <div class="mascotas-badge">
-                        <i class="fas fa-paw"></i>
-                        ${mascotas.length} mascota${mascotas.length > 1 ? 's' : ''}
-                    </div>
-                </div>
                 
-                <div class="mascotas-grid">
-                    ${mascotasHTML}
-                </div>
-            `;
-            
-            container.appendChild(nuevoCliente);
-            cerrarModalCliente();
-        });
-
-        // Cerrar modal al hacer clic fuera
-        document.getElementById('clienteModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                cerrarModalCliente();
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`HTTP error! status: ${response.status}, details: ${JSON.stringify(errorData)}`);
+                }
+                
+                cerrarModal();
+                cargarClientes();
+                alert(editMode ? "Cliente actualizado exitosamente" : "Cliente agregado exitosamente");
+            } catch (error) {
+                console.error("Error guardando cliente:", error);
+                alert("Error guardando cliente: " + error.message);
             }
         });
     </script>
 </body>
 </html>
+

@@ -31,12 +31,26 @@ def root():
 def admin():
     return FileResponse(STATIC_DIR / "frontend" / "admin.html")
 
-# 4) Tu API de empleados
+# 4) Panel de consultas
+@app.get("/consultas", include_in_schema=False)
+def consultas():
+    return FileResponse(STATIC_DIR / "frontend" / "consultas.html")
+
+# 5) Panel de clientes
+@app.get("/clientes", include_in_schema=False)
+def clientes():
+    return FileResponse(STATIC_DIR / "frontend" / "clientes.html")
+
+# 6) Tu API de empleados
 from app.routers.empleado import router as empleado_router
 app.include_router(empleado_router)
 
-# 5) Tu API de consultas
+# 7) Tu API de consultas
 # … ya tienes mount("/static") y la ruta /admin …
 from app.routers.consulta import router as consulta_router
 app.include_router(consulta_router)
+
+# 8) Tu API de clientes
+from app.routers.cliente_contacto import router as cliente_router
+app.include_router(cliente_router)
 

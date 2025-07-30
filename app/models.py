@@ -20,3 +20,9 @@ class Consulta(BaseModel):
     idClinica:       int
     idEmpleado:      int
     idMascota:       int
+
+class ClienteContacto(BaseModel):
+    idCliente:       int
+    correo:          str
+    direccion:       Optional[str] = None
+    telefono:        Optional[str] = None
