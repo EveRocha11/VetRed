@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetRed - Administración</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/frontend/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/frontend/css/admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-paw"></i> VETRET</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <i class="fas fa-users"></i>
+                    Empleados
+                </a>
+                <a href="/static/frontend/citas.html" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    Citas
+                </a>
+                <a href="/static/frontend/clientes.html" class="nav-item">
+                    <i class="fas fa-user-friends"></i>
+                    Clientes
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    Reportes
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    Configuración
+                </a>
+                <a href="../index.html" class="nav-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Cerrar Sesión
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="content-header">
+                <div>
+                    <h1>Empleados</h1>
+                    <p>Gestión de Empleados</p>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <h3>Christian Puchaicela</h3>
+                        <p>admin@vetclinic.com</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employees Section -->
+            <div class="employees-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>Lista de Empleados</h2>
+                        <p>Administre el personal veterinario de la clínica</p>
+                    </div>
+                    <button class="btn-add" onclick="agregarEmpleado()">
+                        <i class="fas fa-plus"></i>
+                        Agregar Empleado
+                    </button>
+                </div>
+
+                <table class="employees-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Especialidad</th>
+                            <th>Dirección</th>
+                            <th>Salario</th>
+                            <th>Contratación</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="empleados-tbody">
+                        <tr>
+                            <td>Dr. María González</td>
+                            <td>Cirugía General</td>
+                            <td>La floresta</td>
+                            <td>1000</td>
+                            <td>12/05/2023</td>
+                            <td><span class="status-badge status-disponible">Disponible</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-action btn-edit" onclick="editarEmpleado(this)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" onclick="eliminarEmpleado(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Dr. Luis Herrera</td>
+                            <td>Cirugía General</td>
+                            <td>La floresta</td>
+                            <td>1000</td>
+                            <td>12/05/2023</td>
+                            <td><span class="status-badge status-disponible">Disponible</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-action btn-edit" onclick="editarEmpleado(this)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" onclick="eliminarEmpleado(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Dr. Carlos Rodríguez</td>
+                            <td>Cirugía General</td>
+                            <td>La floresta</td>
+                            <td>1000</td>
+                            <td>12/05/2023</td>
+                            <td><span class="status-badge status-disponible">Disponible</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-action btn-edit" onclick="editarEmpleado(this)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" onclick="eliminarEmpleado(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Dra. Ana Martínez</td>
+                            <td>Cirugía General</td>
+                            <td>La floresta</td>
+                            <td>1000</td>
+                            <td>12/05/2023</td>
+                            <td><span class="status-badge status-disponible">Disponible</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-action btn-edit" onclick="editarEmpleado(this)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" onclick="eliminarEmpleado(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar/editar empleado -->
+    <div id="empleadoModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+            <h3 style="margin-bottom: 20px; color: var(--text-dark); font-size: 1.5rem;">Agregar Empleado</h3>
+            <form id="empleadoForm">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Nombre:</label>
+                    <input type="text" id="nombre" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Especialidad:</label>
+                    <input type="text" id="especialidad" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Dirección:</label>
+                    <input type="text" id="direccion" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Salario:</label>
+                    <input type="number" id="salario" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                </div>
+                <div style="margin-bottom: 30px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Fecha de Contratación:</label>
+                    <input type="date" id="fechaContratacion" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                </div>
+                <div style="display: flex; gap: 15px; justify-content: flex-end;">
+                    <button type="button" onclick="cerrarModal()" style="padding: 12px 24px; background: #e2e8f0; color: var(--text-dark); border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">Cancelar</button>
+                    <button type="submit" style="padding: 12px 24px; background: linear-gradient(45deg, #4fd1c7, #667eea); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+  const API = "/api/empleados";
+
+  // 1) Al cargar la página
+  window.addEventListener("DOMContentLoaded", cargarEmpleados);
+
+  async function cargarEmpleados() {
+    try {
+      console.log("Iniciando carga de empleados...");
+      const res = await fetch(API);
+      
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      
+      const lista = await res.json();
+      console.log("Empleados cargados:", lista);
+      
+      const tbody = document.getElementById("empleados-tbody");
+      tbody.innerHTML = "";
+      
+      lista.forEach(emp => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${emp.nombre}</td>
+          <td>${emp.idClinica}</td>
+          <td>${emp.direccion || ""}</td>
+          <td>${emp.salario?.toFixed(2) || ""}</td>
+          <td>${new Date(emp.fechaContratacion).toLocaleDateString()}</td>
+          <td><span class="status-badge status-disponible">Disponible</span></td>
+          <td>
+            <button onclick="editarEmpleado(${emp.idEmpleado},${emp.idClinica})">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button onclick="eliminarEmpleado(${emp.idEmpleado},${emp.idClinica})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    } catch (error) {
+      console.error("Error cargando empleados:", error);
+      const tbody = document.getElementById("empleados-tbody");
+      tbody.innerHTML = `<tr><td colspan="7">Error cargando empleados: ${error.message}</td></tr>`;
+    }
+  }
+
+  // 2) Eliminar
+  async function eliminarEmpleado(idEmp, idClin) {
+    if (!confirm("Eliminar este empleado?")) return;
+    try {
+      const response = await fetch(`${API}/${idEmp}/${idClin}`, { method: "DELETE" });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      cargarEmpleados();
+    } catch (error) {
+      console.error("Error eliminando empleado:", error);
+      alert("Error eliminando empleado: " + error.message);
+    }
+  }
+
+  // 3) Abrir modal + lógica para crear/editar (reutiliza tu código de modal)
+  function agregarEmpleado() { /* muestra form vacío */ }
+  function editarEmpleado(idEmp, idClin) {
+    /* fetch único? o rellenar form con datos existentes */
+  }
+
+  // 4) En tu form#empleadoForm, al submit:
+  //    - arma un objeto {…}
+  //    - usa fetch POST o PUT a API
+  //    - luego close modal + cargarEmpleados()
+</script>
+</body>
+</html>

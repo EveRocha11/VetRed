@@ -1,0 +1,278 @@
+/* ==========================================================================
+   FORM COMPONENTS - Inputs, Buttons, Form Layouts
+   ========================================================================== */
+
+/* Form Containers */
+.form-container {
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-field {
+    margin-bottom: var(--spacing-md);
+}
+
+/* Labels */
+.form-label, .field-label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-xs);
+    font-size: 1rem;
+}
+
+/* Input Fields */
+.form-input, .field-input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    background: rgba(248, 250, 252, 0.8);
+    color: var(--text-dark);
+    font-weight: 500;
+    transition: var(--transition-normal);
+    font-family: 'Poppins', sans-serif;
+}
+
+.form-input:focus, .field-input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px var(--border-focus);
+    background: white;
+}
+
+.form-input:read-only, .field-input:read-only {
+    background: rgba(248, 250, 252, 0.5);
+    cursor: not-allowed;
+}
+
+/* Textarea */
+.field-textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* Select Fields */
+.form-select {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    background: white;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: var(--transition-normal);
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px var(--border-focus);
+}
+
+/* Buttons */
+.btn {
+    padding: 15px 30px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    font-size: 1rem;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(74, 144, 226, 0.3);
+}
+
+.btn-secondary {
+    background: var(--border-light);
+    color: var(--text-dark);
+}
+
+.btn-secondary:hover {
+    background: #d1d5db;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+/* Button Sizes */
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+}
+
+.btn-lg {
+    padding: 18px 36px;
+    font-size: 1.125rem;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+/* Button Groups */
+.btn-group {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: flex-end;
+    margin-top: var(--spacing-lg);
+}
+
+.btn-group-center {
+    justify-content: center;
+}
+
+.btn-group-start {
+    justify-content: flex-start;
+}
+
+.btn-group-between {
+    justify-content: space-between;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.btn-action {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    font-size: 0.9rem;
+}
+
+.btn-pendiente {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-pendiente:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+.btn-guardar {
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+    color: white;
+}
+
+.btn-guardar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+}
+
+/* Checkbox and Radio */
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
+}
+
+.form-check input {
+    margin: 0;
+}
+
+/* Form Validation */
+.form-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: var(--spacing-xs);
+}
+
+.form-input.error {
+    border-color: #dc3545;
+}
+
+.form-success {
+    color: #28a745;
+    font-size: 0.875rem;
+    margin-top: var(--spacing-xs);
+}
+
+.form-input.success {
+    border-color: #28a745;
+}
+
+/* Responsive Forms */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+    }
+}
