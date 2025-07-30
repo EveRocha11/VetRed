@@ -237,19 +237,29 @@ class EmpleadoRepository:
             
             cursor = conn.cursor()
             
-            # Actualizar en la tabla base correspondiente
+            # Depuración: mostrar si el empleado existe en la tabla base antes del UPDATE
+            if e.idClinica == 2:
+                cursor.execute("SELECT * FROM Empleado_Guayaquil WHERE idEmpleado=? AND idClinica=?", e.idEmpleado, e.idClinica)
+                existe = cursor.fetchone()
+                logger.info(f"[DEBUG] Empleado en Empleado_Guayaquil: {existe}")
+            else:
+                cursor.execute("SELECT * FROM Empleado_Quito WHERE idEmpleado=? AND idClinica=?", e.idEmpleado, e.idClinica)
+                existe = cursor.fetchone()
+                logger.info(f"[DEBUG] Empleado en Empleado_Quito: {existe}")
+
+            # Actualizar en la tabla base correspondiente (usar también idClinica en el WHERE)
             sql = """
               UPDATE Empleado_Quito
                  SET nombre=?, direccion=?, salario=?, fechaContratacion=?
-               WHERE idEmpleado=?
+               WHERE idEmpleado=? AND idClinica=?
             """ if e.idClinica != 2 else """
               UPDATE Empleado_Guayaquil  
                  SET nombre=?, direccion=?, salario=?, fechaContratacion=?
-               WHERE idEmpleado=?
+               WHERE idEmpleado=? AND idClinica=?
             """
             
             logger.info(f"Actualizando empleado {e.idEmpleado} en sede {('Guayaquil' if e.idClinica == 2 else 'Quito')}")
-            cursor.execute(sql, e.nombre, e.direccion, e.salario, e.fechaContratacion, e.idEmpleado)
+            cursor.execute(sql, e.nombre, e.direccion, e.salario, e.fechaContratacion, e.idEmpleado, e.idClinica)
             
             # Verificar que se actualizó al menos una fila
             if cursor.rowcount == 0:
