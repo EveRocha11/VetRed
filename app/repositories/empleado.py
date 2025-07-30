@@ -10,34 +10,34 @@ class EmpleadoRepository:
         self.db_router = DatabaseRouter()
 
     def get_empleado_sede(self, idEmpleado: int) -> Optional[str]:
-        """Determinar en qué sede trabaja un empleado"""
+        """Determinar en qué sede trabaja un empleado usando las vistas unificadas"""
         try:
-            # Verificar en Quito - crear nueva conexión
+            # Verificar en Quito usando la vista dbo.Empleado
             import pyodbc
             from ..config import ConfigQuito, ConfigGuayaquil
             
             conn_quito = pyodbc.connect(ConfigQuito.conn_str())
             cursor_quito = conn_quito.cursor()
             
-            cursor_quito.execute("SELECT idEmpleado FROM Empleado_Quito WHERE idEmpleado = ?", (idEmpleado,))
+            cursor_quito.execute("SELECT idEmpleado FROM dbo.Empleado WHERE idEmpleado = ?", (idEmpleado,))
             quito_result = cursor_quito.fetchone()
             cursor_quito.close()
             conn_quito.close()
             
             if quito_result:
-                return "Quito"
+                return "Quito"  # Si se encuentra en Quito, es de Quito
             
-            # Verificar en Guayaquil - crear nueva conexión
+            # Verificar en Guayaquil usando la vista dbo.Empleado
             conn_guayaquil = pyodbc.connect(ConfigGuayaquil.conn_str())
             cursor_guayaquil = conn_guayaquil.cursor()
             
-            cursor_guayaquil.execute("SELECT idEmpleado FROM Empleado_Guayaquil WHERE idEmpleado = ?", (idEmpleado,))
+            cursor_guayaquil.execute("SELECT idEmpleado FROM dbo.Empleado WHERE idEmpleado = ?", (idEmpleado,))
             guayaquil_result = cursor_guayaquil.fetchone()
             cursor_guayaquil.close()
             conn_guayaquil.close()
             
             if guayaquil_result:
-                return "Guayaquil"
+                return "Guayaquil"  # Si se encuentra en Guayaquil, es de Guayaquil
             
             return None
             
@@ -64,15 +64,18 @@ class EmpleadoRepository:
             return []
 
     def authenticate_empleado(self, id_empleado: int, nombre: str) -> Optional[dict]:
-        """Autenticar empleado usando las tablas correctas de cada sede"""
+        """Autenticar empleado usando las vistas unificadas"""
         try:
-            # Intentar en Quito primero
-            conn_quito = self.db_router.get_auth_db()
+            import pyodbc
+            from ..config import ConfigQuito, ConfigGuayaquil
+            
+            # Intentar en Quito primero usando la vista dbo.Empleado
+            conn_quito = pyodbc.connect(ConfigQuito.conn_str())
             cursor = conn_quito.cursor()
             
             query = """
                 SELECT idEmpleado, nombre, direccion, salario, fechaContratacion, idClinica 
-                FROM Empleado_Quito 
+                FROM dbo.Empleado 
                 WHERE idEmpleado = ? AND nombre = ?
             """
             
@@ -87,7 +90,7 @@ class EmpleadoRepository:
                     salario=row[3],
                     fechaContratacion=row[4],
                     idClinica=row[5],
-                    sede="Quito"
+                    sede="Quito"  # Hardcoded ya que estamos en la DB de Quito
                 )
                 
                 cursor.close()
@@ -104,16 +107,10 @@ class EmpleadoRepository:
             conn_quito.close()
             
             # Si no se encuentra en Quito, intentar en Guayaquil
-            conn_guayaquil = self.db_router.get_cliente_contacto_db()
+            conn_guayaquil = pyodbc.connect(ConfigGuayaquil.conn_str())
             cursor = conn_guayaquil.cursor()
             
-            query_guayaquil = """
-                SELECT idEmpleado, nombre, direccion, salario, fechaContratacion, idClinica 
-                FROM Empleado_Guayaquil 
-                WHERE idEmpleado = ? AND nombre = ?
-            """
-            
-            cursor.execute(query_guayaquil, (id_empleado, nombre))
+            cursor.execute(query, (id_empleado, nombre))
             row = cursor.fetchone()
             
             if row:
@@ -124,7 +121,7 @@ class EmpleadoRepository:
                     salario=row[3],
                     fechaContratacion=row[4],
                     idClinica=row[5],
-                    sede="Guayaquil"
+                    sede="Guayaquil"  # Hardcoded ya que estamos en la DB de Guayaquil
                 )
                 
                 cursor.close()

@@ -30,7 +30,7 @@ class ConsultaRepository:
             return []
 
     def get_by_empleado_fecha(self, idEmpleado: int, fecha: date) -> List[dict]:
-        """Obtener consultas de un empleado para una fecha específica con información del cliente"""
+        """Obtener consultas de un empleado para una fecha específica usando vistas unificadas"""
         try:
             # Primero determinar la sede del empleado
             from ..repositories.empleado import EmpleadoRepository
@@ -43,105 +43,55 @@ class ConsultaRepository:
             
             consultas = []
             
+            # Usar la vista unificada según la sede
+            import pyodbc
             if sede == "Quito":
-                # Buscar en base de datos de Quito - crear nueva conexión
-                import pyodbc
                 from ..config import ConfigQuito
-                
                 conn = pyodbc.connect(ConfigQuito.conn_str())
-                cur = conn.cursor()
-                
-                query = """
-                    SELECT 
-                        c.idConsulta,
-                        c.fecha,
-                        c.hora,
-                        c.motivo,
-                        c.estado,
-                        c.observaciones,
-                        c.idEmpleado,
-                        c.idMascota,
-                        m.nombre as mascota_nombre,
-                        m.especie as mascota_tipo,
-                        'Cliente de ' + m.nombre as cliente_nombre
-                    FROM Consulta_Quito c
-                    LEFT JOIN Mascota m ON m.idMascota = c.idMascota
-                    WHERE c.idEmpleado = ? AND c.fecha = ?
-                    ORDER BY c.hora
-                """
-                
-                cur.execute(query, (idEmpleado, fecha))
-                rows = cur.fetchall()
-                
-                for row in rows:
-                    consulta = {
-                        "idConsulta": row[0],
-                        "fecha": row[1].isoformat() if row[1] else None,
-                        "hora": str(row[2]) if row[2] else None,
-                        "motivo": row[3],
-                        "estado": row[4],
-                        "observaciones": row[5],
-                        "idEmpleado": row[6],
-                        "idMascota": row[7],
-                        "mascota_nombre": row[8] or f"Mascota {row[7]}",
-                        "mascota_tipo": row[9] or "Desconocido",
-                        "cliente_nombre": row[10] or "Cliente Desconocido",
-                        "cliente_correo": ""
-                    }
-                    consultas.append(consulta)
-                
-                cur.close()
-                conn.close()
-                
-            elif sede == "Guayaquil":
-                # Buscar en base de datos de Guayaquil - crear nueva conexión
-                import pyodbc
+            else:  # Guayaquil
                 from ..config import ConfigGuayaquil
-                
                 conn = pyodbc.connect(ConfigGuayaquil.conn_str())
-                cur = conn.cursor()
-                
-                query = """
-                    SELECT 
-                        c.idConsulta,
-                        c.fecha,
-                        c.hora,
-                        c.motivo,
-                        c.estado,
-                        c.observaciones,
-                        c.idEmpleado,
-                        c.idMascota,
-                        m.nombre as mascota_nombre,
-                        m.especie as mascota_tipo,
-                        'Cliente de ' + m.nombre as cliente_nombre
-                    FROM Consulta_Guayaquil c
-                    LEFT JOIN Mascota m ON m.idMascota = c.idMascota
-                    WHERE c.idEmpleado = ? AND c.fecha = ?
-                    ORDER BY c.hora
-                """
-                
-                cur.execute(query, (idEmpleado, fecha))
-                rows = cur.fetchall()
-                
-                for row in rows:
-                    consulta = {
-                        "idConsulta": row[0],
-                        "fecha": row[1].isoformat() if row[1] else None,
-                        "hora": str(row[2]) if row[2] else None,
-                        "motivo": row[3],
-                        "estado": row[4],
-                        "observaciones": row[5],
-                        "idEmpleado": row[6],
-                        "idMascota": row[7],
-                        "mascota_nombre": row[8] or f"Mascota {row[7]}",
-                        "mascota_tipo": row[9] or "Desconocido",
-                        "cliente_nombre": row[10] or "Cliente Desconocido",
-                        "cliente_correo": ""
-                    }
-                    consultas.append(consulta)
-                
-                cur.close()
-                conn.close()
+            
+            cur = conn.cursor()
+            
+            # Query usando la vista unificada dbo.Consulta (usando solo columnas existentes)
+            query = """
+                SELECT 
+                    idConsulta,
+                    fecha,
+                    hora,
+                    motivo,
+                    estado,
+                    observaciones,
+                    idEmpleado,
+                    idMascota
+                FROM dbo.Consulta
+                WHERE idEmpleado = ? AND fecha = ?
+                ORDER BY hora
+            """
+            
+            cur.execute(query, (idEmpleado, fecha))
+            rows = cur.fetchall()
+            
+            for row in rows:
+                consulta = {
+                    "idConsulta": row[0],
+                    "fecha": row[1].isoformat() if row[1] else None,
+                    "hora": str(row[2]) if row[2] else None,
+                    "motivo": row[3],
+                    "estado": row[4],
+                    "observaciones": row[5],
+                    "idEmpleado": row[6],
+                    "idMascota": row[7],
+                    "mascota_nombre": f"Mascota {row[7]}",  # Placeholder
+                    "mascota_tipo": "Desconocido",  # Placeholder
+                    "cliente_nombre": "Cliente Desconocido",  # Placeholder
+                    "cliente_correo": ""
+                }
+                consultas.append(consulta)
+            
+            cur.close()
+            conn.close()
             
             logger.info(f"Encontradas {len(consultas)} consultas para empleado {idEmpleado} en {sede} para fecha {fecha}")
             return consultas
@@ -173,76 +123,124 @@ class ConsultaRepository:
             raise
 
     def update_observaciones(self, idConsulta: int, observaciones: str) -> bool:
-        """Actualizar observaciones de una consulta"""
+        """Actualizar observaciones de una consulta usando la sede correcta"""
         try:
-            # Intentar actualizar en Quito primero
-            conn_quito = self.db_router.get_auth_db()
-            cur = conn_quito.cursor()
+            # Primero encontrar en qué sede está la consulta
+            sede = self._find_consulta_sede(idConsulta)
+            if not sede:
+                logger.warning(f"No se pudo encontrar la consulta {idConsulta} en ninguna sede")
+                return False
+            
+            import pyodbc
+            if sede == "Quito":
+                from ..config import ConfigQuito
+                conn = pyodbc.connect(ConfigQuito.conn_str())
+                tabla = "Consulta_Quito"
+            else:  # Guayaquil
+                from ..config import ConfigGuayaquil
+                conn = pyodbc.connect(ConfigGuayaquil.conn_str())
+                tabla = "Consulta_Guayaquil"
+            
+            cur = conn.cursor()
             cur.execute(
-                "UPDATE Consulta_Quito SET observaciones = ? WHERE idConsulta = ?",
+                f"UPDATE {tabla} SET observaciones = ? WHERE idConsulta = ?",
                 (observaciones, idConsulta)
             )
             rows_affected = cur.rowcount
-            conn_quito.commit()
+            conn.commit()
             cur.close()
-            conn_quito.close()
+            conn.close()
             
             if rows_affected > 0:
+                logger.info(f"Observaciones actualizadas en {sede} para consulta {idConsulta}")
                 return True
-            
-            # Si no se actualizó en Quito, intentar en Guayaquil
-            conn_guayaquil = self.db_router.get_cliente_contacto_db()
-            cur = conn_guayaquil.cursor()
-            cur.execute(
-                "UPDATE Consulta_Guayaquil SET observaciones = ? WHERE idConsulta = ?",
-                (observaciones, idConsulta)
-            )
-            rows_affected = cur.rowcount
-            conn_guayaquil.commit()
-            cur.close()
-            conn_guayaquil.close()
-            
-            return rows_affected > 0
+            else:
+                logger.warning(f"No se encontró la consulta {idConsulta} para actualizar")
+                return False
             
         except Exception as e:
             logger.error(f"Error actualizando observaciones de consulta {idConsulta}: {e}")
             return False
 
     def update_estado(self, idConsulta: int, estado: str) -> bool:
-        """Actualizar estado de una consulta"""
+        """Actualizar estado de una consulta usando la sede correcta"""
         try:
-            # Intentar actualizar en Quito primero
-            conn_quito = self.db_router.get_auth_db()
-            cur = conn_quito.cursor()
+            # Primero encontrar en qué sede está la consulta
+            sede = self._find_consulta_sede(idConsulta)
+            if not sede:
+                logger.warning(f"No se pudo encontrar la consulta {idConsulta} en ninguna sede")
+                return False
+            
+            import pyodbc
+            if sede == "Quito":
+                from ..config import ConfigQuito
+                conn = pyodbc.connect(ConfigQuito.conn_str())
+                tabla = "Consulta_Quito"
+            else:  # Guayaquil
+                from ..config import ConfigGuayaquil
+                conn = pyodbc.connect(ConfigGuayaquil.conn_str())
+                tabla = "Consulta_Guayaquil"
+            
+            cur = conn.cursor()
             cur.execute(
-                "UPDATE Consulta_Quito SET estado = ? WHERE idConsulta = ?",
+                f"UPDATE {tabla} SET estado = ? WHERE idConsulta = ?",
                 (estado, idConsulta)
             )
             rows_affected = cur.rowcount
-            conn_quito.commit()
+            conn.commit()
             cur.close()
-            conn_quito.close()
+            conn.close()
             
             if rows_affected > 0:
+                logger.info(f"Estado actualizado en {sede} para consulta {idConsulta}: {estado}")
                 return True
-            
-            # Si no se actualizó en Quito, intentar en Guayaquil
-            conn_guayaquil = self.db_router.get_cliente_contacto_db()
-            cur = conn_guayaquil.cursor()
-            cur.execute(
-                "UPDATE Consulta_Guayaquil SET estado = ? WHERE idConsulta = ?",
-                (estado, idConsulta)
-            )
-            rows_affected = cur.rowcount
-            conn_guayaquil.commit()
-            cur.close()
-            conn_guayaquil.close()
-            
-            return rows_affected > 0
+            else:
+                logger.warning(f"No se encontró la consulta {idConsulta} para actualizar")
+                return False
             
         except Exception as e:
             logger.error(f"Error actualizando estado de consulta {idConsulta}: {e}")
             return False
+
+    def _find_consulta_sede(self, idConsulta: int) -> Optional[str]:
+        """Encontrar en qué sede está una consulta específica"""
+        try:
+            import pyodbc
+            from ..config import ConfigQuito, ConfigGuayaquil
+            
+            # Buscar en Quito primero
+            try:
+                conn_quito = pyodbc.connect(ConfigQuito.conn_str())
+                cur = conn_quito.cursor()
+                cur.execute("SELECT idConsulta FROM dbo.Consulta WHERE idConsulta = ?", (idConsulta,))
+                if cur.fetchone():
+                    cur.close()
+                    conn_quito.close()
+                    return "Quito"
+                cur.close()
+                conn_quito.close()
+            except Exception as e:
+                logger.error(f"Error buscando en Quito: {e}")
+            
+            # Buscar en Guayaquil
+            try:
+                conn_guayaquil = pyodbc.connect(ConfigGuayaquil.conn_str())
+                cur = conn_guayaquil.cursor()
+                cur.execute("SELECT idConsulta FROM dbo.Consulta WHERE idConsulta = ?", (idConsulta,))
+                if cur.fetchone():
+                    cur.close()
+                    conn_guayaquil.close()
+                    return "Guayaquil"
+                cur.close()
+                conn_guayaquil.close()
+            except Exception as e:
+                logger.error(f"Error buscando en Guayaquil: {e}")
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error determinando sede de consulta {idConsulta}: {e}")
+            return None
 
 # Instancia global del repositorio
 consulta_repository = ConsultaRepository()
