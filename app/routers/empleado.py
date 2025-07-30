@@ -10,9 +10,10 @@ repo = EmpleadoRepository()
 consulta_repo = ConsultaRepository()
 
 @router.get("/", response_model=List[Empleado])
-def get_empleados():
+def get_empleados(sede_admin: str = "Quito"):
+    """Obtener empleados filtrados por sede usando vista dbo.Empleado"""
     try:
-        return repo.list()
+        return repo.list(sede_admin=sede_admin)
     except Exception as e:
         print(f"Error en get_empleados: {e}")
         raise HTTPException(status_code=500, detail="Error interno del servidor")

@@ -14,23 +14,49 @@ class ConsultaRepository:
         """Por ahora usando la conexión de Quito para consultas"""
         return self.db_router.get_auth_db()
 
-    def list(self) -> List[Consulta]:
+    def list(self, sede_admin: str = None) -> List[Consulta]:
+        """Listar consultas usando la vista dbo.Consulta con filtro por sede"""
         try:
-            db = self.get_consulta_db()
-            cur = db.cursor()
-            # Apunta a tu VIEW dbo.Consulta
-            cur.execute("SELECT * FROM dbo.Consulta;")
-            cols = [c[0] for c in cur.description]
-            rows = cur.fetchall()
-            cur.close()
-            db.close()
-            return [Consulta(**dict(zip(cols, row))) for row in rows]
+            import pyodbc
+            from ..config import ConfigQuito, ConfigGuayaquil
+            
+            # Determinar qué base de datos usar según la sede del admin
+            if sede_admin == "Quito":
+                conn = pyodbc.connect(ConfigQuito.conn_str())
+                id_clinica_filter = 1  # Quito = idClinica 1
+            elif sede_admin == "Guayaquil":
+                conn = pyodbc.connect(ConfigGuayaquil.conn_str())
+                id_clinica_filter = 2  # Guayaquil = idClinica 2
+            else:
+                # Por defecto usar Quito
+                conn = pyodbc.connect(ConfigQuito.conn_str())
+                id_clinica_filter = 1
+            
+            cursor = conn.cursor()
+            
+            # Usar la vista dbo.Consulta con filtro por idClinica
+            query = "SELECT * FROM dbo.Consulta WHERE idClinica = ?"
+            cursor.execute(query, (id_clinica_filter,))
+            
+            cols = [c[0] for c in cursor.description]
+            rows = cursor.fetchall()
+            
+            consultas = []
+            for row in rows:
+                consulta_data = dict(zip(cols, row))
+                consultas.append(Consulta(**consulta_data))
+            
+            cursor.close()
+            conn.close()
+            
+            return consultas
+            
         except Exception as e:
             logger.error(f"Error en list consultas: {e}")
             return []
 
     def get_by_empleado_fecha(self, idEmpleado: int, fecha: date) -> List[dict]:
-        """Obtener consultas de un empleado para una fecha específica usando vistas unificadas"""
+        """Obtener consultas de un empleado para una fecha específica usando vista dbo.Consulta"""
         try:
             # Primero determinar la sede del empleado
             from ..repositories.empleado import EmpleadoRepository
@@ -43,61 +69,61 @@ class ConsultaRepository:
             
             consultas = []
             
-            # Usar la vista unificada según la sede
+            # Usar la vista dbo.Consulta según la sede
             import pyodbc
-            if sede == "Quito":
-                from ..config import ConfigQuito
-                conn = pyodbc.connect(ConfigQuito.conn_str())
-            else:  # Guayaquil
-                from ..config import ConfigGuayaquil
-                conn = pyodbc.connect(ConfigGuayaquil.conn_str())
+            try:
+                if sede == "Quito":
+                    from ..config import ConfigQuito
+                    conn = pyodbc.connect(ConfigQuito.conn_str())
+                else:  # Guayaquil
+                    from ..config import ConfigGuayaquil
+                    conn = pyodbc.connect(ConfigGuayaquil.conn_str())
+                
+                cursor = conn.cursor()
+                
+                # Query usando la vista dbo.Consulta
+                query = """
+                    SELECT 
+                        idConsulta,
+                        fecha,
+                        hora,
+                        motivo,
+                        estado,
+                        observaciones,
+                        idEmpleado,
+                        idMascota
+                    FROM dbo.Consulta
+                    WHERE idEmpleado = ? AND fecha = ?
+                    ORDER BY hora
+                """
+                
+                cursor.execute(query, (idEmpleado, fecha))
+                rows = cursor.fetchall()
+                
+                for row in rows:
+                    consulta_dict = {
+                        'idConsulta': row[0],
+                        'fecha': row[1].strftime('%Y-%m-%d') if row[1] else None,
+                        'hora': str(row[2]) if row[2] else None,
+                        'motivo': row[3],
+                        'estado': row[4],
+                        'observaciones': row[5],
+                        'idEmpleado': row[6],
+                        'idMascota': row[7]
+                    }
+                    consultas.append(consulta_dict)
+                
+                cursor.close()
+                conn.close()
+                
+            except Exception as e:
+                logger.error(f"Error consultando vista dbo.Consulta en {sede}: {e}")
+                return []
             
-            cur = conn.cursor()
-            
-            # Query usando la vista unificada dbo.Consulta (usando solo columnas existentes)
-            query = """
-                SELECT 
-                    idConsulta,
-                    fecha,
-                    hora,
-                    motivo,
-                    estado,
-                    observaciones,
-                    idEmpleado,
-                    idMascota
-                FROM dbo.Consulta
-                WHERE idEmpleado = ? AND fecha = ?
-                ORDER BY hora
-            """
-            
-            cur.execute(query, (idEmpleado, fecha))
-            rows = cur.fetchall()
-            
-            for row in rows:
-                consulta = {
-                    "idConsulta": row[0],
-                    "fecha": row[1].isoformat() if row[1] else None,
-                    "hora": str(row[2]) if row[2] else None,
-                    "motivo": row[3],
-                    "estado": row[4],
-                    "observaciones": row[5],
-                    "idEmpleado": row[6],
-                    "idMascota": row[7],
-                    "mascota_nombre": f"Mascota {row[7]}",  # Placeholder
-                    "mascota_tipo": "Desconocido",  # Placeholder
-                    "cliente_nombre": "Cliente Desconocido",  # Placeholder
-                    "cliente_correo": ""
-                }
-                consultas.append(consulta)
-            
-            cur.close()
-            conn.close()
-            
-            logger.info(f"Encontradas {len(consultas)} consultas para empleado {idEmpleado} en {sede} para fecha {fecha}")
             return consultas
             
         except Exception as e:
-            logger.error(f"Error obteniendo consultas del empleado {idEmpleado} para fecha {fecha}: {e}")
+            logger.error(f"Error obteniendo consultas del empleado {idEmpleado}: {e}")
             return []
 
     def create(self, c: Consulta) -> Consulta:

@@ -5,117 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VetRed - Panel de Usuario</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/static/frontend/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-    <div class="main-container">
-        <!-- Header -->
-        <div class="header">
-            <div class="header-nav">
-                <div class="logo">
-                    <div class="logo-icon">
-                        <i class="fas fa-paw"></i>
-                    </div>
-                    VETRET
-                </div>
-                <div class="nav-buttons">
-                    <a href="index.html" class="nav-btn btn-inicio">Inicio</a>
-                    <a href="login.html" class="nav-btn btn-cerrar">Cerrar Sesión</a>
-                </div>
-            </div>
-        </div>
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #50C878;
+            --text-dark: #2d3748;
+            --text-light: #718096;
+            --background-light: #f7fafc;
+        }
 
-        <!-- Main Content -->
-        <div class="content-wrapper">
-            <!-- User Profile -->
-            <div class="profile-section">
-                <h1 class="page-title">USUARIO</h1>
-                
-                <div class="profile-card">
-                    <div class="profile-header">
-                        <div class="profile-avatar">
-                            <div class="avatar-illustration" style="width: 100px; height: 100px; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"35\" r=\"15\" fill=\"%23FFB84D\"/><ellipse cx=\"50\" cy=\"75\" rx=\"25\" ry=\"20\" fill=\"%23FFB84D\"/><circle cx=\"45\" cy=\"32\" r=\"2\" fill=\"%23000\"/><circle cx=\"55\" cy=\"32\" r=\"2\" fill=\"%23000\"/><path d=\"M 45 38 Q 50 42 55 38\" stroke=\"%23000\" stroke-width=\"2\" fill=\"none\"/><rect x=\"35\" y=\"55\" width=\"30\" height=\"15\" rx=\"3\" fill=\"%23D4AF37\"/><rect x=\"40\" y=\"60\" width=\"20\" height=\"5\" fill=\"%23000\"/></svg>') center/contain no-repeat;"></div>
-                        </div>
-                        <div class="profile-info">
-                            <div class="form-group">
-                                <label class="form-label">Nombre:</label>
-                                <input type="text" class="form-input" value="ChristianPuchaicela" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Email:</label>
-                                <input type="email" class="form-input" value="ChristianPuchaicela@gmail.com" readonly>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dashboard Cards -->
-            <div class="grid grid-2">
-                <!-- Mi Agenda -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-calendar-alt"></i>
-                        </div>
-                        <h3 class="card-title">Mi Agenda</h3>
-                    </div>
-                    
-                    <div class="agenda-item">
-                        <div class="agenda-date">Próxima cita:</div>
-                        <div class="agenda-details">15 de Julio, 2025 - 10:00 AM</div>
-                        <div class="agenda-details">Cita Programada:</div>
-                        <div class="agenda-details">15 de Julio, 2025 - 10:00 AM</div>
-                        <div class="agenda-doctor">Dr. Roberth Jácome</div>
-                    </div>
-                    
-                    <button class="btn btn-primary btn-full" onclick="window.location.href='agenda-cita.html'" style="margin-top: 20px;">Agendar nueva cita</button>
-                </div>
-
-                <!-- Citas Programadas -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <h3 class="card-title">Citas Programadas</h3>
-                    </div>
-                    
-                    <div class="appointment-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <div>
-                            <div class="appointment-time">Hoy 10:00 AM</div>
-                            <div class="appointment-details">Duque - Cirugía</div>
-                        </div>
-                    </div>
-                    
-                    <div class="appointment-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <div>
-                            <div class="appointment-time">Hoy 13:00 PM</div>
-                            <div class="appointment-details">Candy - Cirugía</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Animación de entrada
-        window.addEventListener('load', function() {
-            document.querySelectorAll('.card').forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                setTimeout(() => {
-                    card.style.transition = 'all 0.6s ease';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 200);
-            });
-        });
-    </script>
-</body>
-</html>
         body {
             margin: 0;
             padding: 0;
@@ -468,8 +368,8 @@
                     VETRET
                 </div>
                 <div class="nav-buttons">
-                    <a href="index.html" class="nav-btn btn-inicio">Inicio</a>
-                    <a href="login.html" class="nav-btn btn-cerrar">Cerrar Sesión</a>
+                    <a href="/login" class="nav-btn btn-inicio">Inicio</a>
+                    <a href="/login" class="nav-btn btn-cerrar">Cerrar Sesión</a>
                 </div>
             </div>
         </div>
@@ -488,11 +388,11 @@
                         <div class="profile-info">
                             <div class="form-group">
                                 <label class="form-label">Nombre:</label>
-                                <input type="text" class="form-input" value="ChristianPuchaicela" readonly>
+                                <input type="text" class="form-input" id="userName" value="ChristianPuchaicela" readonly>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Email:</label>
-                                <input type="email" class="form-input" value="ChristianPuchaicela" readonly>
+                                <input type="email" class="form-input" id="userEmail" value="ChristianPuchaicela@gmail.com" readonly>
                             </div>
                         </div>
                     </div>
@@ -518,7 +418,7 @@
                         <div class="agenda-doctor">Dr. Roberth Jácome</div>
                     </div>
                     
-                    <button class="btn-agendar" onclick="window.location.href='agenda-cita.html'">Agendar nueva cita</button>
+                    <button class="btn-agendar" onclick="window.location.href='/usuario/agenda-cita.html'">Agendar nueva cita</button>
                 </div>
 
                 <!-- Citas Programadas -->
@@ -527,7 +427,7 @@
                         <div class="card-icon">
                             <i class="fas fa-clock"></i>
                         </div>
-                        <h3 class="card-title">Citas Programadas:</h3>
+                        <h3 class="card-title">Citas Programadas</h3>
                     </div>
                     
                     <div class="cita-item">
@@ -549,8 +449,26 @@
     </div>
 
     <script>
-        // Animación de entrada
+        // Obtener información del usuario del localStorage
         window.addEventListener('load', function() {
+            try {
+                const userData = localStorage.getItem('user');
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    
+                    // Actualizar la información del usuario en la página
+                    if (user.nombre) {
+                        document.getElementById('userName').value = user.nombre;
+                    }
+                    if (user.correo) {
+                        document.getElementById('userEmail').value = user.correo;
+                    }
+                }
+            } catch (e) {
+                console.error('Error al cargar información del usuario:', e);
+            }
+
+            // Animación de entrada
             document.querySelectorAll('.dashboard-card').forEach((card, index) => {
                 card.style.opacity = '0';
                 card.style.transform = 'translateY(20px)';

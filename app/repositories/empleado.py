@@ -10,34 +10,40 @@ class EmpleadoRepository:
         self.db_router = DatabaseRouter()
 
     def get_empleado_sede(self, idEmpleado: int) -> Optional[str]:
-        """Determinar en qué sede trabaja un empleado usando las vistas unificadas"""
+        """Determinar en qué sede trabaja un empleado usando las vistas dbo.Empleado"""
         try:
-            # Verificar en Quito usando la vista dbo.Empleado
             import pyodbc
             from ..config import ConfigQuito, ConfigGuayaquil
             
-            conn_quito = pyodbc.connect(ConfigQuito.conn_str())
-            cursor_quito = conn_quito.cursor()
-            
-            cursor_quito.execute("SELECT idEmpleado FROM dbo.Empleado WHERE idEmpleado = ?", (idEmpleado,))
-            quito_result = cursor_quito.fetchone()
-            cursor_quito.close()
-            conn_quito.close()
-            
-            if quito_result:
-                return "Quito"  # Si se encuentra en Quito, es de Quito
+            # Verificar en Quito usando la vista dbo.Empleado
+            try:
+                conn_quito = pyodbc.connect(ConfigQuito.conn_str())
+                cursor_quito = conn_quito.cursor()
+                
+                cursor_quito.execute("SELECT idEmpleado FROM dbo.Empleado WHERE idEmpleado = ?", (idEmpleado,))
+                quito_result = cursor_quito.fetchone()
+                cursor_quito.close()
+                conn_quito.close()
+                
+                if quito_result:
+                    return "Quito"
+            except Exception as e:
+                logger.warning(f"Error consultando Quito para empleado {idEmpleado}: {e}")
             
             # Verificar en Guayaquil usando la vista dbo.Empleado
-            conn_guayaquil = pyodbc.connect(ConfigGuayaquil.conn_str())
-            cursor_guayaquil = conn_guayaquil.cursor()
-            
-            cursor_guayaquil.execute("SELECT idEmpleado FROM dbo.Empleado WHERE idEmpleado = ?", (idEmpleado,))
-            guayaquil_result = cursor_guayaquil.fetchone()
-            cursor_guayaquil.close()
-            conn_guayaquil.close()
-            
-            if guayaquil_result:
-                return "Guayaquil"  # Si se encuentra en Guayaquil, es de Guayaquil
+            try:
+                conn_guayaquil = pyodbc.connect(ConfigGuayaquil.conn_str())
+                cursor_guayaquil = conn_guayaquil.cursor()
+                
+                cursor_guayaquil.execute("SELECT idEmpleado FROM dbo.Empleado WHERE idEmpleado = ?", (idEmpleado,))
+                guayaquil_result = cursor_guayaquil.fetchone()
+                cursor_guayaquil.close()
+                conn_guayaquil.close()
+                
+                if guayaquil_result:
+                    return "Guayaquil"
+            except Exception as e:
+                logger.warning(f"Error consultando Guayaquil para empleado {idEmpleado}: {e}")
             
             return None
             
@@ -49,16 +55,43 @@ class EmpleadoRepository:
         """Por ahora usando la conexión de Quito para empleados"""
         return self.db_router.get_auth_db()
 
-    def list(self) -> List[Empleado]:
+    def list(self, sede_admin: str = None) -> List[Empleado]:
+        """Listar empleados usando la vista dbo.Empleado con filtro por sede"""
         try:
-            db = self.get_empleado_db()
-            cur = db.cursor()
-            cur.execute("SELECT * FROM dbo.Empleado;")
-            cols = [c[0] for c in cur.description]
-            rows = cur.fetchall()
-            cur.close()
-            db.close()
-            return [Empleado(**dict(zip(cols, row))) for row in rows]
+            import pyodbc
+            from ..config import ConfigQuito, ConfigGuayaquil
+            
+            # Determinar qué base de datos usar según la sede del admin
+            if sede_admin == "Quito":
+                conn = pyodbc.connect(ConfigQuito.conn_str())
+                id_clinica_filter = 1  # Quito = idClinica 1
+            elif sede_admin == "Guayaquil":
+                conn = pyodbc.connect(ConfigGuayaquil.conn_str())
+                id_clinica_filter = 2  # Guayaquil = idClinica 2
+            else:
+                # Por defecto usar Quito
+                conn = pyodbc.connect(ConfigQuito.conn_str())
+                id_clinica_filter = 1
+            
+            cursor = conn.cursor()
+            
+            # Usar la vista dbo.Empleado con filtro por idClinica
+            query = "SELECT * FROM dbo.Empleado WHERE idClinica = ?"
+            cursor.execute(query, (id_clinica_filter,))
+            
+            cols = [c[0] for c in cursor.description]
+            rows = cursor.fetchall()
+            
+            empleados = []
+            for row in rows:
+                empleado_data = dict(zip(cols, row))
+                empleados.append(Empleado(**empleado_data))
+            
+            cursor.close()
+            conn.close()
+            
+            return empleados
+            
         except Exception as e:
             logger.error(f"Error en list(): {e}")
             return []
