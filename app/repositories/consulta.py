@@ -141,7 +141,9 @@ class ConsultaRepository:
                 conn = pyodbc.connect(ConfigQuito.conn_str())
             
             cursor = conn.cursor()
-            
+
+            # Habilitar XACT_ABORT para evitar transacciones anidadas
+            cursor.execute("SET XACT_ABORT ON")
             # Insertar usando la vista dbo.Consulta
             sql = """
               INSERT INTO dbo.Consulta
@@ -188,6 +190,8 @@ class ConsultaRepository:
                 conn = pyodbc.connect(ConfigGuayaquil.conn_str())
             
             cur = conn.cursor()
+            # Habilitar XACT_ABORT para evitar transacciones anidadas
+            cursor.execute("SET XACT_ABORT ON")
             # Usar la vista dbo.Consulta en lugar de las tablas base
             cur.execute(
                 "UPDATE dbo.Consulta SET observaciones = ? WHERE idConsulta = ?",
@@ -227,6 +231,8 @@ class ConsultaRepository:
                 conn = pyodbc.connect(ConfigGuayaquil.conn_str())
             
             cur = conn.cursor()
+            # Habilitar XACT_ABORT para evitar transacciones anidadas
+            cur.execute("SET XACT_ABORT ON")
             # Usar la vista dbo.Consulta en lugar de las tablas base
             cur.execute(
                 "UPDATE dbo.Consulta SET estado = ? WHERE idConsulta = ?",
@@ -263,7 +269,8 @@ class ConsultaRepository:
                 conn = pyodbc.connect(ConfigQuito.conn_str())
             
             cursor = conn.cursor()
-            
+            # Habilitar XACT_ABORT para evitar transacciones anidadas
+            cursor.execute("SET XACT_ABORT ON")
             # Actualizar usando la vista dbo.Consulta
             sql = """
               UPDATE dbo.Consulta
@@ -383,6 +390,33 @@ class ConsultaRepository:
             
         except Exception as e:
             logger.error(f"Error determinando sede de consulta {idConsulta}: {e}")
+            return None
+
+    def get_by_id(self, idConsulta: int, idClinica: int) -> Optional[Consulta]:
+        """Obtener una consulta por idConsulta e idClinica usando la vista dbo.Consulta"""
+        try:
+            import pyodbc
+            from ..config import ConfigQuito, ConfigGuayaquil
+            # Determinar qué conexión usar según idClinica
+            if idClinica == 2:
+                conn = pyodbc.connect(ConfigGuayaquil.conn_str())
+            else:
+                conn = pyodbc.connect(ConfigQuito.conn_str())
+            cursor = conn.cursor()
+            query = "SELECT * FROM dbo.Consulta WHERE idConsulta = ? AND idClinica = ?"
+            cursor.execute(query, (idConsulta, idClinica))
+            row = cursor.fetchone()
+            if row:
+                cols = [c[0] for c in cursor.description]
+                consulta_data = dict(zip(cols, row))
+                consulta = Consulta(**consulta_data)
+            else:
+                consulta = None
+            cursor.close()
+            conn.close()
+            return consulta
+        except Exception as e:
+            logger.error(f"Error en get_by_id: {e}")
             return None
 
 # Instancia global del repositorio
