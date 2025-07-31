@@ -33,6 +33,16 @@ class Mascota(BaseModel):
     idCliente:       int
     correo:          str
 
+class MascotaLite(BaseModel):
+    idMascota:       int
+    nombre:          str
+    especie:         Optional[str]
+    raza:            Optional[str]
+    sexo:            Optional[str]
+    fechaNacimiento: Optional[date]
+    color:           Optional[str]
+    peso:            Optional[float]
+
 class ClienteContacto(BaseModel):
     idCliente:       int
     correo:          str

@@ -1,7 +1,7 @@
 from typing import List, Optional
 from datetime import date
 from ..database_router import DatabaseRouter
-from ..models import Mascota
+from ..models import Mascota, MascotaLite
 import logging
 
 logger = logging.getLogger(__name__)
@@ -25,6 +25,21 @@ class MascotaRepository:
             return [Mascota(**dict(zip(cols, row))) for row in rows]
         except Exception as e:
             logger.error(f"Error listando mascotas para cliente {idCliente}, {correo}: {e}")
+            return []
+        
+    def list_some_fields_by_cliente(self, idCliente: int, correo: str) -> List[MascotaLite]:
+        try:
+            cur = self.db.cursor()
+            cur.execute(
+                "SELECT idMascota, nombre, especie, raza, sexo, fechaNacimiento, color, peso FROM Mascota WHERE idCliente = ? AND correo = ?",
+                (idCliente, correo)
+            )
+            cols = [c[0] for c in cur.description]
+            rows = cur.fetchall()
+            cur.close()
+            return [MascotaLite(**dict(zip(cols, row))) for row in rows]
+        except Exception as e:
+            logger.error(f"Error listando mascotas fields para cliente {idCliente}, {correo}: {e}")
             return []
 
     def get_by_id(self, idMascota: int) -> Optional[Mascota]:

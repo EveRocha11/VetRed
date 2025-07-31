@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetRed - Mascotas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/frontend/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/frontend/css/admin.css">
+</head>
+<body>
+    <div class="clientem-layout">
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="content-header">
+                <div>
+                    <h1>Mascotas</h1>
+                    <p id="sede-info">Gestión de mascotas:</p>
+                </div>
+                 <div class="nav-buttons">
+                    <a href="/usuario" class="nav-btn btn-editar">Inicio</a>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <h3 id="cliente-nombre">Administrador</h3>
+                        <p id="cliente-correo">admin@vetclinic.com</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employees Section -->
+            <div class="employees-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>Lista de Mascotas</h2>
+                        <p>Administre sus mascotas</p>
+                    </div>
+                    
+                </div>
+
+                <table class="employees-table">
+                    <thead>
+                        <tr>
+                            <th>ID Mascota</th>
+                            <th>Nombre</th>
+                            <th>Especie</th>
+                            <th>Raza</th>
+                            <th>Sexo</th>
+                            <th>Fecha Nacimiento</th>
+                            <th>Color</th>
+                            <th>Peso</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mascotas-tbody">
+                        <!-- Los datos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Mascota -->
+    <div id="mascotaModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+        <>
+            <div style="
+                background: white;
+                padding: 30px;
+                border-radius: 20px;
+                width: 90%;
+                max-width: 500px;
+                max-height: 90vh;
+                overflow-y: auto;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            ">
+                <h3 id="modalTitle" style="margin-bottom: 20px; color: var(--text-dark); font-size: 1.5rem;">Editar Mascota</h3>
+                <form id="mascotaForm">
+                    <input type="hidden" id="idMascota">
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Nombre:</label>
+                        <input type="text" id="nombre" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Especie:</label>
+                        <input type="text" id="especie" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Raza:</label>
+                        <input type="text" id="raza" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Sexo:</label>
+                        <select id="sexo" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                            <option value="">Seleccionar sexo</option>
+                            <option value="M">Macho</option>
+                            <option value="F">Hembra</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Fecha Nacimiento:</label>
+                        <input type="date" id="fechaNacimiento" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Color:</label>
+                        <input type="text" id="color" step="0.01" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Peso:</label>
+                        <input type="number" id="peso" step="0.01" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                    </div>
+
+                    <div style="display: flex; gap: 15px; justify-content: flex-end;">
+                        <button type="button" onclick="cerrarModal()" style="padding: 12px 24px; background: #e2e8f0; color: var(--text-dark); border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">Cancelar</button>
+                        <button type="submit" style="padding: 12px 24px; background: linear-gradient(45deg, #4fd1c7, #667eea); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </>
+    </div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", async () => {
+        const idCliente = sessionStorage.getItem("idCliente");
+        const correo = sessionStorage.getItem("correo");
+
+        if (!idCliente || !correo) {
+            alert("Debe iniciar sesión para ver sus mascotas.");
+            return;
+        }
+
+        function actualizarInfoUsuario() {
+            try {
+                const userData = localStorage.getItem('user');
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    if (user.nombre) {
+                        document.getElementById('cliente-nombre').textContent = user.nombre;
+                    }
+                    if (user.correo) {
+                        document.getElementById('cliente-correo').textContent = user.correo;
+                    }
+                }
+            } catch (e) {
+                console.error('Error al cargar información del usuario:', e);
+            }
+        }
+
+        actualizarInfoUsuario();
+
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/api/mascotas/${idCliente}/${correo}`);
+            const mascotas = await res.json();
+
+            const tbody = document.getElementById("mascotas-tbody");
+            tbody.innerHTML = "";
+
+            mascotas.forEach(mascota => {
+                const mascotaStr = encodeURIComponent(JSON.stringify(mascota));
+                console.log(mascotaStr);
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${mascota.idMascota}</td>
+                    <td>${mascota.nombre}</td>
+                    <td>${mascota.especie}</td>
+                    <td>${mascota.raza}</td>
+                    <td>${mascota.sexo}</td>
+                    <td>${new Date(mascota.fechaNacimiento).toLocaleDateString()}</td>
+                    <td>${mascota.color}</td>
+                    <td>${mascota.peso} kg</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-edit" onclick="editarMascota('${mascotaStr}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action btn-delete" onclick="eliminarMascota(${mascota.idMascota})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (error) {
+            console.error("Error al cargar mascotas:", error);
+            alert("No se pudieron cargar las mascotas.");
+        }
+    });
+
+    function editarMascota(mascotaDataStr) {
+        const mascota = JSON.parse(decodeURIComponent(mascotaDataStr));
+
+        document.getElementById("idMascota").value = mascota.idMascota;
+        document.getElementById("nombre").value = mascota.nombre;
+        document.getElementById("especie").value = mascota.especie;
+        document.getElementById("raza").value = mascota.raza || "";
+        document.getElementById("sexo").value = mascota.sexo || "";
+        document.getElementById("fechaNacimiento").value = mascota.fechaNacimiento?.split("T")[0] || "";
+        document.getElementById("color").value = mascota.color || "";
+        document.getElementById("peso").value = mascota.peso || "";
+
+        document.getElementById("mascotaModal").style.display = "flex";
+    }
+
+    function cerrarModal() {
+        document.getElementById("mascotaModal").style.display = "none";
+    }
+
+    async function eliminarMascota(idMascota) {
+        if (!confirm("¿Deseas eliminar esta mascota?")) return;
+
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/api/mascotas/${idMascota}`, {
+                method: "DELETE"
+            });
+
+            if (!res.ok) throw new Error("Error al eliminar mascota");
+
+            alert("Mascota eliminada correctamente");
+            location.reload();
+        } catch (error) {
+            console.error("Error al eliminar mascota:", error);
+            alert("Error al eliminar mascota");
+        }
+    }
+
+    document.getElementById("mascotaForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const idCliente = sessionStorage.getItem("idCliente");
+        const correo = sessionStorage.getItem("correo");
+
+        const data = {
+            idMascota: document.getElementById("idMascota").value,
+            idCliente,
+            correo,
+            nombre: document.getElementById("nombre").value,
+            especie: document.getElementById("especie").value,
+            raza: document.getElementById("raza").value,
+            sexo: document.getElementById("sexo").value,
+            fechaNacimiento: document.getElementById("fechaNacimiento").value,
+            color: document.getElementById("color").value,
+            peso: parseFloat(document.getElementById("peso").value),
+        };
+
+        try {
+            const res = await fetch("http://127.0.0.1:8000/api/mascotas", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            if (!res.ok) throw new Error("Error al guardar mascota");
+
+            alert("Mascota actualizada correctamente");
+            cerrarModal();
+            location.reload();
+        } catch (error) {
+            console.error("Error al guardar mascota:", error);
+            alert("Error al guardar mascota");
+        }
+    });
+</script>
+
+</body>
+</html>

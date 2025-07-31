@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Query
 from typing import List
-from ..models import Mascota
+from ..models import Mascota, MascotaLite
 from ..repositories.mascota import MascotaRepository
 router = APIRouter(prefix="/api/mascotas", tags=["Mascotas"])
 repo = MascotaRepository()
@@ -12,6 +12,15 @@ def get_mascotas(idCliente: int, correo: str):
         return repo.list_by_cliente(idCliente, correo)
     except Exception as e:
         print(f"Error en get_mascotas: {e}")
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
+    
+# 1.1. Listar mascotas por nombre
+@router.get("/{idCliente}/{correo}", response_model=List[MascotaLite])
+def get_campos_simplificados(idCliente: int, correo: str):
+    try:
+        return repo.list_some_fields_by_cliente(idCliente, correo)
+    except Exception as e:
+        print(f"Error en get_mascotas some fields by cliente: {e}")
         raise HTTPException(status_code=500, detail="Error interno del servidor")
 
 # 2. Obtener una mascota por ID
