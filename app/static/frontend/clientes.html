@@ -62,10 +62,6 @@
                         <h2>Lista de Clientes</h2>
                         <p id="section-description">Administre la información de contacto de los clientes</p>
                     </div>
-                    <!-- <button class="btn-add" onclick="agregarCliente()">
-                        <i class="fas fa-plus"></i>
-                        Agregar Cliente
-                    </button> -->
                 </div>
 
                 <table class="employees-table">
@@ -73,8 +69,6 @@
                         <tr>
                             <th>ID Cliente</th>
                             <th>Correo Electrónico</th>
-                            <th>Dirección</th>
-                            <th>Teléfono</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -86,266 +80,137 @@
         </div>
     </div>
 
-    <!-- Modal para agregar/editar cliente -->
-    <div id="clienteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
-        <div style="background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
-            <h3 id="modalTitle" style="margin-bottom: 20px; color: var(--text-dark); font-size: 1.5rem;">Agregar Cliente</h3>
-            <form id="clienteForm">
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">ID Cliente:</label>
-                    <input type="number" id="idCliente" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Correo Electrónico:</label>
-                    <input type="email" id="correo" required style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Dirección:</label>
-                    <input type="text" id="direccion" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                </div>
-                <div style="margin-bottom: 30px;">
-                    <label style="display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600;">Teléfono:</label>
-                    <input type="tel" id="telefono" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                </div>
-                <div style="display: flex; gap: 15px; justify-content: flex-end;">
-                    <button type="button" onclick="cerrarModal()" style="padding: 12px 24px; background: #e2e8f0; color: var(--text-dark); border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">Cancelar</button>
-                    <button type="submit" style="padding: 12px 24px; background: linear-gradient(45deg, #4fd1c7, #667eea); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">Guardar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <script>
         const API = "/api/clientes";
-        let editMode = false;
-        let originalIdCliente = null;
-        let originalCorreo = null;
 
-        // Al cargar la página, actualizar información del usuario
-        window.addEventListener("DOMContentLoaded", function() {
-            actualizarInfoUsuario();
-            cargarClientes();
+// Al cargar la página, actualizar información del usuario
+window.addEventListener("DOMContentLoaded", function() {
+    actualizarInfoUsuario();
+    cargarClientes();
+});
+
+function actualizarInfoUsuario() {
+    try {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+            const user = JSON.parse(userData);
+            
+            // Actualizar información en el header si existe
+            const adminNombre = document.getElementById('admin-nombre');
+            const adminCorreo = document.getElementById('admin-correo');
+            const sedeActual = document.getElementById('sede-actual');
+            
+            if (adminNombre && user.nombre) {
+                adminNombre.textContent = user.nombre;
+            }
+            if (adminCorreo && user.correo) {
+                adminCorreo.textContent = user.correo;
+            }
+            if (sedeActual && user.sede) {
+                sedeActual.textContent = user.sede;
+            }
+        }
+    } catch (e) {
+        console.error('Error al cargar información del usuario:', e);
+    }
+}
+
+async function cargarClientes() {
+    try {
+        console.log("Iniciando carga de clientes...");
+        
+        // Obtener información del usuario del localStorage
+        const userData = localStorage.getItem('user');
+        let sedeAdmin = 'Quito'; // Por defecto
+        
+        if (userData) {
+            const user = JSON.parse(userData);
+            if (user.sede) {
+                sedeAdmin = user.sede;
+            }
+        }
+        
+        console.log("Sede del administrador:", sedeAdmin);
+        
+        // Incluir sede_admin como parámetro en la URL
+        const url = `${API}?sede_admin=${encodeURIComponent(sedeAdmin)}`;
+        const res = await fetch(url);
+        
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        
+        const lista = await res.json();
+        console.log("Clientes cargados para sede", sedeAdmin, ":", lista);
+        
+        const tbody = document.getElementById("clientes-tbody");
+        tbody.innerHTML = "";
+        
+        if (lista.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="3">No hay clientes registrados para la sede ${sedeAdmin}</td></tr>`;
+            return;
+        }
+        
+        lista.forEach(cliente => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${cliente.idCliente}</td>
+                <td>${cliente.correo}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn-action btn-delete" onclick="eliminarCliente(${cliente.idCliente}, '${cliente.correo}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>`;
+            tbody.appendChild(tr);
         });
+    } catch (error) {
+        console.error("Error cargando clientes:", error);
+        const tbody = document.getElementById("clientes-tbody");
+        tbody.innerHTML = `<tr><td colspan="3">Error cargando clientes: ${error.message}</td></tr>`;
+    }
+}
 
-        function actualizarInfoUsuario() {
-            try {
-                const userData = localStorage.getItem('user');
-                if (userData) {
-                    const user = JSON.parse(userData);
-                    
-                    // Actualizar información en el header si existe
-                    const adminNombre = document.getElementById('admin-nombre');
-                    const adminCorreo = document.getElementById('admin-correo');
-                    const sedeActual = document.getElementById('sede-actual');
-                    
-                    if (adminNombre && user.nombre) {
-                        adminNombre.textContent = user.nombre;
-                    }
-                    if (adminCorreo && user.correo) {
-                        adminCorreo.textContent = user.correo;
-                    }
-                    if (sedeActual && user.sede) {
-                        sedeActual.textContent = user.sede;
-                    }
-                }
-            } catch (e) {
-                console.error('Error al cargar información del usuario:', e);
-            }
-        }
-
-        async function cargarClientes() {
-            try {
-                console.log("Iniciando carga de clientes...");
-                
-                // Obtener información del usuario del localStorage
-                const userData = localStorage.getItem('user');
-                let sedeAdmin = 'Quito'; // Por defecto
-                
-                if (userData) {
-                    const user = JSON.parse(userData);
-                    if (user.sede) {
-                        sedeAdmin = user.sede;
-                    }
-                }
-                
-                console.log("Sede del administrador:", sedeAdmin);
-                
-                // Incluir sede_admin como parámetro en la URL
-                const url = `${API}?sede_admin=${encodeURIComponent(sedeAdmin)}`;
-                const res = await fetch(url);
-                
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                }
-                
-                const lista = await res.json();
-                console.log("Clientes cargados para sede", sedeAdmin, ":", lista);
-                
-                const tbody = document.getElementById("clientes-tbody");
-                tbody.innerHTML = "";
-                
-                if (lista.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5">No hay clientes registrados para la sede ${sedeAdmin}</td></tr>`;
-                    return;
-                }
-                
-                lista.forEach(cliente => {
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td>${cliente.idCliente}</td>
-                        <td>${cliente.correo}</td>
-                        <td>${cliente.direccion || 'No especificada'}</td>
-                        <td>${cliente.telefono || 'No especificado'}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-action btn-edit" onclick="editarCliente(${cliente.idCliente}, '${cliente.correo}')">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn-action btn-delete" onclick="eliminarCliente(${cliente.idCliente}, '${cliente.correo}')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>`;
-                    tbody.appendChild(tr);
-                });
-            } catch (error) {
-                console.error("Error cargando clientes:", error);
-                const tbody = document.getElementById("clientes-tbody");
-                tbody.innerHTML = `<tr><td colspan="5">Error cargando clientes: ${error.message}</td></tr>`;
-            }
-        }
-
-        // 2) Agregar cliente
-        function agregarCliente() {
-            editMode = false;
-            originalIdCliente = null;
-            originalCorreo = null;
-            document.getElementById("modalTitle").textContent = "Agregar Cliente";
-            document.getElementById("clienteModal").style.display = "flex";
-            document.getElementById("clienteForm").reset();
-            
-            // Habilitar campos de clave primaria en modo agregar
-            document.getElementById("idCliente").disabled = false;
-            document.getElementById("correo").disabled = false;
-        }
-
-        // 3) Editar cliente
-        async function editarCliente(idCliente, correo) {
-            editMode = true;
-            originalIdCliente = idCliente;
-            originalCorreo = correo;
-            
-            // Buscar los datos del cliente en la tabla
-            const filas = document.querySelectorAll("#clientes-tbody tr");
-            let clienteData = null;
-            
-            filas.forEach(fila => {
-                const celdas = fila.querySelectorAll("td");
-                if (celdas.length > 0 && 
-                    parseInt(celdas[0].textContent) === idCliente && 
-                    celdas[1].textContent === correo) {
-                    clienteData = {
-                        idCliente: parseInt(celdas[0].textContent),
-                        correo: celdas[1].textContent,
-                        direccion: celdas[2].textContent === 'No especificada' ? '' : celdas[2].textContent,
-                        telefono: celdas[3].textContent === 'No especificado' ? '' : celdas[3].textContent
-                    };
-                }
-            });
-            
-            if (clienteData) {
-                document.getElementById("modalTitle").textContent = "Editar Cliente";
-                document.getElementById("idCliente").value = clienteData.idCliente;
-                document.getElementById("correo").value = clienteData.correo;
-                document.getElementById("direccion").value = clienteData.direccion;
-                document.getElementById("telefono").value = clienteData.telefono;
-                
-                // Deshabilitar campos de clave primaria en modo editar
-                document.getElementById("idCliente").disabled = true;
-                document.getElementById("correo").disabled = true;
-                
-                document.getElementById("clienteModal").style.display = "flex";
-            }
-        }
-
-        // 4) Eliminar cliente
-        async function eliminarCliente(idCliente, correo) {
-            if (!confirm(`¿Eliminar el cliente ${idCliente} con correo ${correo}?`)) return;
-            
-            try {
-                const response = await fetch(`${API}/${idCliente}/${encodeURIComponent(correo)}`, { 
-                    method: "DELETE" 
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                cargarClientes();
-                alert("Cliente eliminado exitosamente");
-            } catch (error) {
-                console.error("Error eliminando cliente:", error);
-                alert("Error eliminando cliente: " + error.message);
-            }
-        }
-
-        // 5) Cerrar modal
-        function cerrarModal() {
-            document.getElementById("clienteModal").style.display = "none";
-            editMode = false;
-            originalIdCliente = null;
-            originalCorreo = null;
-        }
-
-        // 6) Manejar envío del formulario
-        document.getElementById("clienteForm").addEventListener("submit", async function(e) {
-            e.preventDefault();
-            
-            try {
-                const formData = {
-                    idCliente: parseInt(document.getElementById("idCliente").value),
-                    correo: document.getElementById("correo").value,
-                    direccion: document.getElementById("direccion").value || null,
-                    telefono: document.getElementById("telefono").value || null
-                };
-                
-                console.log("Enviando cliente:", formData);
-                
-                let response;
-                if (editMode) {
-                    // Modo editar - usar PUT
-                    response = await fetch(API, {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(formData)
-                    });
-                } else {
-                    // Modo agregar - usar POST
-                    response = await fetch(API, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(formData)
-                    });
-                }
-                
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`HTTP error! status: ${response.status}, details: ${JSON.stringify(errorData)}`);
-                }
-                
-                cerrarModal();
-                cargarClientes();
-                alert(editMode ? "Cliente actualizado exitosamente" : "Cliente agregado exitosamente");
-            } catch (error) {
-                console.error("Error guardando cliente:", error);
-                alert("Error guardando cliente: " + error.message);
+// Función para eliminar cliente
+// Función para eliminar cliente
+async function eliminarCliente(idCliente, correo) {
+    if (!confirm(`¿Eliminar el cliente ${idCliente} con correo ${correo}?`)) return;
+    
+    try {
+        console.log(`Eliminando cliente ${idCliente} con correo ${correo}`);
+        
+        const response = await fetch(`${API}/${idCliente}/${encodeURIComponent(correo)}`, { 
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json'
             }
         });
+        
+        if (!response.ok) {
+            let errorMessage = `HTTP error! status: ${response.status}`;
+            try {
+                const errorData = await response.json();
+                errorMessage += `, details: ${errorData.detail || JSON.stringify(errorData)}`;
+            } catch (parseError) {
+                console.warn("No se pudo parsear el error como JSON:", parseError);
+            }
+            throw new Error(errorMessage);
+        }
+        
+        // Recargar la lista de clientes para reflejar los cambios
+        await cargarClientes();
+        
+        alert("Cliente eliminado exitosamente");
+        
+    } catch (error) {
+        console.error("Error eliminando cliente:", error);
+        alert("Error eliminando cliente: " + error.message);
+    }
+}
+
+
+
     </script>
 </body>
 </html>
-

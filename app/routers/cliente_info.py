@@ -12,7 +12,7 @@ def get_clientes_info():
         return repo.list()
     except Exception as e:
         print(f"Error en get_clientes: {e}")
-        raise HTTPException(status_code=500, detail="Error interno del servidor")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/{idCliente}/{correo}", response_model=ClienteInfo)
 def get_cliente_info(idCliente: int, correo: str):
@@ -27,7 +27,7 @@ def post_cliente_info(cliente: ClienteInfo):
         return repo.create(cliente)
     except Exception as e:
         print(f"Error en post_cliente: {e}")
-        raise HTTPException(status_code=500, detail="Error interno del servidor")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.put("/", response_model=ClienteInfo)
 def put_cliente_info(cliente: ClienteInfo):
@@ -35,7 +35,7 @@ def put_cliente_info(cliente: ClienteInfo):
         return repo.update(cliente)
     except Exception as e:
         print(f"Error en put_cliente: {e}")
-        raise HTTPException(status_code=500, detail="Error interno del servidor")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.delete("/{idCliente}/{correo}", status_code=204)
 def del_cliente_info(idCliente: int, correo: str):
@@ -43,4 +43,4 @@ def del_cliente_info(idCliente: int, correo: str):
         repo.delete(idCliente, correo)
     except Exception as e:
         print(f"Error en del_cliente: {e}")
-        raise HTTPException(status_code=500, detail="Error interno del servidor")
+        raise HTTPException(status_code=500, detail=str(e))

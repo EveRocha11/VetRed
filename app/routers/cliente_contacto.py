@@ -2,9 +2,11 @@ from fastapi import APIRouter, HTTPException
 from typing import List
 from ..models import ClienteContacto
 from ..repositories.cliente_contacto import ClienteContactoRepository
+from ..repositories.cliente_info_repository import ClienteInfoRepository
 
 router = APIRouter(prefix="/api/clientes", tags=["Clientes"])
 repo = ClienteContactoRepository()
+repo_info = ClienteInfoRepository()
 
 @router.get("/", response_model=List[ClienteContacto])
 def get_clientes():
@@ -45,7 +47,8 @@ def put_cliente(cliente: ClienteContacto):
 @router.delete("/{idCliente}/{correo}", status_code=204)
 def del_cliente(idCliente: int, correo: str):
     try:
-        repo.delete(idCliente, correo)
+        # Eliminar de ambas tablas usando el repositorio principal
+        repo_info.delete(idCliente, correo)
     except Exception as e:
         print(f"Error en del_cliente: {e}")
-        raise HTTPException(status_code=500, detail="Error interno del servidor")
+        raise HTTPException(status_code=500, detail=str(e))
