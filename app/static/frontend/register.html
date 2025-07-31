@@ -131,7 +131,7 @@
         <div class="logo">
             <i class="fas fa-paw"></i>
             <h1>VETRED</h1>
-            <p>Crear Nueva Cuenta</p>
+            <p>Crear Nueva Cuenta - Cliente</p>
         </div>
 
         <div id="errorMessage" class="error-message"></div>
@@ -151,6 +151,16 @@
             <div class="form-group">
                 <label for="nombre">Nombre Completo:</label>
                 <input type="text" id="nombre" name="nombre" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nombre">Telefono:</label>
+                <input type="text" id="telefono" name="telefono" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nombre">Dirección:</label>
+                <input type="text" id="direccion" name="direccion" required>
             </div>
 
             <button type="submit" class="btn-register">
@@ -176,40 +186,53 @@
             errorDiv.style.display = 'none';
             successDiv.style.display = 'none';
             
-            const formData = {
+            const formDataInfo = {
                 idCliente: parseInt(document.getElementById('idCliente').value),
                 correo: document.getElementById('correo').value,
                 nombre: document.getElementById('nombre').value
             };
 
+            const formDataContacto = {
+                idCliente: parseInt(document.getElementById('idCliente').value),
+                correo: document.getElementById('correo').value,
+                direccion: document.getElementById('direccion').value,
+                telefono: document.getElementById('telefono').value
+            };
+
             try {
-                const response = await fetch('/api/auth/register', {
+                const resInfo = await fetch('/api/cliente-info', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formDataInfo)
                 });
 
-                const data = await response.json();
-
-                if (response.ok) {
-                    // Registro exitoso
-                    successDiv.textContent = 'Registro exitoso. Redirigiendo al login...';
-                    successDiv.style.display = 'block';
-                    
-                    // Redirigir al login después de 2 segundos
-                    setTimeout(() => {
-                        window.location.href = '/login';
-                    }, 2000);
-                } else {
-                    // Error en registro
-                    errorDiv.textContent = data.detail || 'Error en el registro';
-                    errorDiv.style.display = 'block';
+                if (!resInfo.ok) {
+                    const error = await resInfo.json();
+                    throw new Error(error.detail || 'Error creando Cliente_Info');
                 }
+
+                const resContacto = await fetch('/api/clientes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formDataContacto)
+                });
+
+                if (!resContacto.ok) {
+                    const error = await resContacto.json();
+                    throw new Error(error.detail || 'Error creando Cliente_Contacto');
+                }
+
+                // Si todo va bien
+                successDiv.textContent = '✅ Registro exitoso. Redirigiendo al login...';
+                successDiv.style.display = 'block';
+
+                // Esperar 2 segundos para que el mensaje se vea
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                window.location.href = '/login';
             } catch (error) {
                 console.error('Error:', error);
-                errorDiv.textContent = 'Error de conexión. Intente nuevamente.';
+                errorDiv.textContent = error.message || 'Error de conexión';
                 errorDiv.style.display = 'block';
             }
         });

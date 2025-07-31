@@ -96,6 +96,25 @@ class ClienteContactoRepository:
             except Exception as e2:
                 logger.error(f"Error en fallback cliente_contacto: {e2}")
                 return []
+        
+    def get_by_id_and_correo(self, idCliente: int, correo: str) -> ClienteContacto | None:
+        try:
+            sql = "SELECT idCliente, correo, direccion, telefono FROM dbo.Cliente_Contacto WHERE idCliente = ? AND correo = ?"
+            cur = self.db.cursor()
+            cur.execute(sql, (idCliente, correo))
+            row = cur.fetchone()
+            cur.close()
+            if row:
+                return ClienteContacto(
+                    idCliente=row[0],
+                    correo=row[1],
+                    direccion=row[2],
+                    telefono=row[3]
+                )
+            return None
+        except Exception as e:
+            print(f"Error obteniendo cliente_contacto por id y correo: {e}")
+            raise
 
     def create(self, cliente: ClienteContacto) -> ClienteContacto:
         try:
@@ -105,13 +124,18 @@ class ClienteContactoRepository:
             VALUES (?,?,?,?)
             """
             cur = self.db.cursor()
-            cur.execute(sql,
-                cliente.idCliente, cliente.correo, cliente.direccion, cliente.telefono
-            )
-            cur.close()  # Cerrar el cursor
+            cur.execute(sql, (
+                cliente.idCliente,
+                cliente.correo,
+                cliente.direccion,
+                cliente.telefono
+            ))
+            self.db.commit()
+            cur.close()
             return cliente
         except Exception as e:
             print(f"Error creando cliente_contacto: {e}")
+            self.db.rollback()
             raise
 
     def update(self, cliente: ClienteContacto) -> ClienteContacto:
@@ -122,21 +146,28 @@ class ClienteContactoRepository:
              WHERE idCliente=? AND correo=?
             """
             cur = self.db.cursor()
-            cur.execute(sql,
-                cliente.direccion, cliente.telefono, cliente.idCliente, cliente.correo
-            )
-            cur.close()  # Cerrar el cursor
+            cur.execute(sql, (
+                cliente.direccion,
+                cliente.telefono,
+                cliente.idCliente,
+                cliente.correo
+            ))
+            self.db.commit()
+            cur.close()
             return cliente
         except Exception as e:
             print(f"Error actualizando cliente_contacto: {e}")
+            self.db.rollback()
             raise
 
     def delete(self, idCliente: int, correo: str):
         try:
             sql = "DELETE FROM dbo.Cliente_Contacto WHERE idCliente=? AND correo=?"
             cur = self.db.cursor()
-            cur.execute(sql, idCliente, correo)
-            cur.close()  # Cerrar el cursor
+            cur.execute(sql, (idCliente, correo))  # 👈 parámetros como tupla
+            self.db.commit()
+            cur.close()
         except Exception as e:
             print(f"Error eliminando cliente_contacto: {e}")
+            self.db.rollback()
             raise

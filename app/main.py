@@ -82,3 +82,10 @@ app.include_router(cliente_router)
 from app.routers.system import router as system_router
 app.include_router(system_router)
 
+# 15) API de mascotas
+from app.routers.mascota import router as mascota_router
+app.include_router(mascota_router)
+
+# 16) API de cliente_info
+from app.routers.cliente_info import router as cliente_info_router
+app.include_router(cliente_info_router)

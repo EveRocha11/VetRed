@@ -13,6 +13,19 @@ class ConsultaRepository:
     def get_consulta_db(self):
         """Por ahora usando la conexión de Quito para consultas"""
         return self.db_router.get_auth_db()
+    
+    def get_max_id(self) -> int:
+        try:
+            db = self.get_consulta_db()
+            cur = db.cursor()
+            cur.execute("SELECT ISNULL(MAX(idConsulta), 0) FROM Consulta")  # Vista
+            print("Max ID query executed")
+            max_id = cur.fetchone()[0]
+            cur.close()
+            return max_id
+        except Exception as e:
+            logger.error(f"Error obteniendo el máximo idConsulta: {e}")
+            return 0
 
     def list(self, sede_admin: str = None) -> List[Consulta]:
         """Listar consultas usando la vista dbo.Consulta con filtro por sede"""
@@ -127,50 +140,27 @@ class ConsultaRepository:
             return []
 
     def create(self, c: Consulta) -> Consulta:
-        """Crear consulta usando la vista dbo.Consulta"""
-        conn = None
-        cursor = None
-        try:
-            import pyodbc
-            from ..config import ConfigQuito, ConfigGuayaquil
-            
-            # Determinar qué conexión usar según idClinica
-            if c.idClinica == 2:  # Guayaquil
-                conn = pyodbc.connect(ConfigGuayaquil.conn_str())
-            else:  # Quito (idClinica == 1 o por defecto)
-                conn = pyodbc.connect(ConfigQuito.conn_str())
-            
-            cursor = conn.cursor()
-
-            # Habilitar XACT_ABORT para evitar transacciones anidadas
-            cursor.execute("SET XACT_ABORT ON")
-            # Insertar usando la vista dbo.Consulta
-            sql = """
-              INSERT INTO dbo.Consulta
+            try:
+                db = self.get_consulta_db()
+                c.idConsulta = self.get_max_id() + 1
+                sql = """
+                INSERT INTO dbo.Consulta
                 (idConsulta, fecha, hora, motivo, estado, observaciones, idClinica, idEmpleado, idMascota)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """
-            
-            logger.info(f"Creando consulta {c.idConsulta} en sede {('Guayaquil' if c.idClinica == 2 else 'Quito')}")
-            cursor.execute(sql, c.idConsulta, c.fecha, c.hora, c.motivo,
-                         c.estado, c.observaciones, c.idClinica,
-                         c.idEmpleado, c.idMascota)
-            
-            conn.commit()
-            logger.info(f"Consulta {c.idConsulta} creada exitosamente")
-            
-            return c
-            
-        except Exception as e:
-            logger.error(f"Error creando consulta: {e}")
-            if conn:
-                conn.rollback()
-            raise
-        finally:
-            if cursor:
-                cursor.close()
-            if conn:
-                conn.close()
+                VALUES (?,?,?,?,?,?,?,?,?)
+                """
+                cur = db.cursor()
+                cur.execute(sql,
+                    c.idConsulta, c.fecha, c.hora, c.motivo,
+                    c.estado, c.observaciones, c.idClinica,
+                    c.idEmpleado, c.idMascota
+                )
+                db.commit()
+                cur.close()
+                db.close()
+                return c
+            except Exception as e:
+                logger.error(f"Error creando consulta: {e}")
+                raise e
 
     def update_observaciones(self, idConsulta: int, observaciones: str) -> bool:
         """Actualizar observaciones de una consulta usando la vista dbo.Consulta"""

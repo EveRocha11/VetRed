@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetRed - Editar información</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #4A90E2 0%, #50C878 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .cliente-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Navigation */
+        .agenda-header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #4A90E2;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-editar {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-editar:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-cerrar {
+            background: rgba(255, 255, 255, 0.9);
+            color: #4A90E2;
+            border: 2px solid transparent;
+        }
+
+        .btn-cerrar:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Content */
+        .agenda-content {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Page Title */
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .main-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        /* Form Container */
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(74, 144, 226, 0.2);
+            border-radius: 15px;
+            font-size: 1rem;
+            background: rgba(248, 250, 252, 0.8);
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(74, 144, 226, 0.2);
+            border-radius: 15px;
+            font-size: 1rem;
+            background: rgba(248, 250, 252, 0.8);
+            color: var(--text-dark);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Pre-filled Values Styling */
+        .form-input[readonly] {
+            background: rgba(74, 144, 226, 0.1);
+            border-color: rgba(74, 144, 226, 0.3);
+            color: #4A90E2;
+            font-weight: 600;
+        }
+
+        /* Submit Button */
+        .btn-guardar {
+            background: linear-gradient(135deg, #2d3748, #1a202c);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-guardar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(45, 55, 72, 0.4);
+            background: linear-gradient(135deg, #1a202c, #2d3748);
+        }
+
+        .btn-guardar:active {
+            transform: translateY(-1px);
+        }
+
+        /* Success Message */
+        .success-message {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.2rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .header-nav {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        /* Animation */
+        .form-container {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cliente-container">
+        <!-- Header -->
+        <div class="agenda-header">
+            <div class="header-nav">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    VETRET
+                </div>
+                <div class="nav-buttons">
+                    <a href="/usuario" class="nav-btn btn-editar">Inicio</a>
+                    <a href="login.html" class="nav-btn btn-cerrar">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="agenda-content">
+            <!-- Page Title -->
+            <div class="page-title">
+                <h1 class="main-title">INFORMACIÓN</h1>
+                <p class="subtitle">Editar información personal</p>
+            </div>
+
+            <!-- Form Container -->
+            <div class="form-container">
+                <div id="successMessage" class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    ¡Edicion exitosa! ¡Tu información ha sido actualizada con éxito.
+                </div>
+
+                <form id="editarClienteForm">
+            <div class="form-grid">
+                <!-- Nombre -->
+                <div class="form-group">
+                <label class="form-label">Nombre:</label>
+                <input type="text" class="form-input" id="nombre" required>
+                </div>
+
+                <!-- Dirección -->
+                <div class="form-group">
+                <label class="form-label">Dirección:</label>
+                <input type="text" class="form-input" id="direccion" required>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="form-group">
+                <label class="form-label">Teléfono:</label>
+                <input type="text" class="form-input" id="telefono" required>
+                </div>
+
+                <!-- Correo (solo lectura) -->
+                <div class="form-group full-width">
+                <label class="form-label">Correo:</label>
+                <input type="email" class="form-input" id="correo" readonly>
+                </div>
+                </div>
+
+                <button type="submit" class="btn-guardar">
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+            </form>
+
+            </div>
+        </div>
+    </div>
+
+<script>
+    const idCliente = sessionStorage.getItem("idCliente");
+    const correo = sessionStorage.getItem("correo");
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        if (!idCliente || !correo) {
+            alert("Debe iniciar sesión.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        try {
+            const [resInfo, resContacto] = await Promise.all([
+                fetch(`http://127.0.0.1:8000/api/cliente-info/${idCliente}/${correo}`),
+                fetch(`http://127.0.0.1:8000/api/clientes/${idCliente}/${correo}`)
+            ]);
+            const dataInfo = await resInfo.json();
+            const dataContacto = await resContacto.json();
+
+            document.getElementById("nombre").value = dataInfo.nombre || "";
+            document.getElementById("direccion").value = dataContacto.direccion || "";
+            document.getElementById("telefono").value = dataContacto.telefono || "";
+            document.getElementById("correo").value = correo;
+
+        } catch (error) {
+            console.error("Error al obtener datos:", error);
+            alert("No se pudo cargar la información del cliente.");
+        }
+    });
+
+    document.getElementById("editarClienteForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const nombre = document.getElementById("nombre").value;
+        const direccion = document.getElementById("direccion").value;
+        const telefono = document.getElementById("telefono").value;
+
+        try {
+            // Actualizar Cliente_Info (Quito)
+            await fetch(`http://127.0.0.1:8000/api/cliente-info`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ idCliente, correo, nombre })
+            });
+
+            // Actualizar Cliente_Contacto (Guayaquil)
+            await fetch("http://127.0.0.1:8000/api/clientes", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ idCliente, correo, direccion, telefono })
+            });
+
+            alert("¡Información actualizada correctamente!");
+            window.location.href = "/usuario";
+
+        } catch (error) {
+            console.error("Error al actualizar:", error);
+            alert("Error al guardar los cambios.");
+        }
+    });
+</script>
+
+</body>
+</html>

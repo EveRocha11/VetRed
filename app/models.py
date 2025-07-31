@@ -11,7 +11,7 @@ class Empleado(BaseModel):
     idClinica:         int
 
 class Consulta(BaseModel):
-    idConsulta:      int
+    idConsulta:      Optional[int] = None  # Será asignado por el backend
     fecha:           date
     hora:            time
     motivo:          str
@@ -20,6 +20,18 @@ class Consulta(BaseModel):
     idClinica:       int
     idEmpleado:      int
     idMascota:       int
+
+class Mascota(BaseModel):
+    idMascota:       int
+    nombre:          str
+    especie:         Optional[str]
+    raza:            Optional[str]
+    sexo:            Optional[str]  # puede ser 'M' o 'F'
+    fechaNacimiento: Optional[date]
+    color:           Optional[str]
+    peso:            Optional[float]
+    idCliente:       int
+    correo:          str
 
 class ClienteContacto(BaseModel):
     idCliente:       int

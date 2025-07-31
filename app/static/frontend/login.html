@@ -262,6 +262,13 @@
                     successDiv.textContent = 'Login exitoso. Redirigiendo...';
                     successDiv.style.display = 'block';
                     
+                    // Guardar en sessionStorage
+                    sessionStorage.setItem("tipo", data.user.tipo);
+                    if (data.user.tipo === "cliente") {
+                        sessionStorage.setItem("idCliente", data.user.idCliente);
+                        sessionStorage.setItem("correo", data.user.correo);
+                    }
+
                     // Guardar información del usuario
                     localStorage.setItem('user', JSON.stringify(data.user));
                     

@@ -7,12 +7,23 @@ router = APIRouter(prefix="/api/clientes", tags=["Clientes"])
 repo = ClienteContactoRepository()
 
 @router.get("/", response_model=List[ClienteContacto])
-def get_clientes(sede_admin: str = "Quito"):
+def get_clientes():
     """Obtener clientes filtrados por sede usando vista o tabla"""
     try:
-        return repo.list(sede_admin=sede_admin)
+        return repo.list()
     except Exception as e:
         print(f"Error en get_clientes: {e}")
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
+
+@router.get("/{idCliente}/{correo}", response_model=ClienteContacto)
+def get_cliente_contacto(idCliente: int, correo: str):
+    try:
+        cliente = repo.get_by_id_and_correo(idCliente, correo)
+        if cliente:
+            return cliente
+        raise HTTPException(status_code=404, detail="Cliente no encontrado")
+    except Exception as e:
+        print(f"Error en get_cliente_contacto: {e}")
         raise HTTPException(status_code=500, detail="Error interno del servidor")
 
 @router.post("/", response_model=ClienteContacto, status_code=201)

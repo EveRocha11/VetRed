@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetRed - Editar información</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #4A90E2 0%, #50C878 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .mascota-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Navigation */
+        .agenda-header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #4A90E2;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-editar {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-editar:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-cerrar {
+            background: rgba(255, 255, 255, 0.9);
+            color: #4A90E2;
+            border: 2px solid transparent;
+        }
+
+        .btn-cerrar:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Content */
+        .agenda-content {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Page Title */
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .main-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        /* Form Container */
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(74, 144, 226, 0.2);
+            border-radius: 15px;
+            font-size: 1rem;
+            background: rgba(248, 250, 252, 0.8);
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(74, 144, 226, 0.2);
+            border-radius: 15px;
+            font-size: 1rem;
+            background: rgba(248, 250, 252, 0.8);
+            color: var(--text-dark);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Pre-filled Values Styling */
+        .form-input[readonly] {
+            background: rgba(74, 144, 226, 0.1);
+            border-color: rgba(74, 144, 226, 0.3);
+            color: #4A90E2;
+            font-weight: 600;
+        }
+
+        /* Submit Button */
+        .btn-guardar {
+            background: linear-gradient(135deg, #2d3748, #1a202c);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-guardar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(45, 55, 72, 0.4);
+            background: linear-gradient(135deg, #1a202c, #2d3748);
+        }
+
+        .btn-guardar:active {
+            transform: translateY(-1px);
+        }
+
+        /* Success Message */
+        .success-message {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.2rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .header-nav {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        /* Animation */
+        .form-container {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mascota-container">
+        <!-- Header -->
+        <div class="agenda-header">
+            <div class="header-nav">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    VETRET
+                </div>
+                <div class="nav-buttons">
+                    <a href="/usuario" class="nav-btn btn-editar">Inicio</a>
+                    <a href="login.html" class="nav-btn btn-cerrar">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="agenda-content">
+            <!-- Page Title -->
+            <div class="page-title">
+                <h1 class="main-title">INFORMACIÓN</h1>
+                <p class="subtitle">Ingresar información de la mascota</p>
+            </div>
+
+            <!-- Form Container -->
+        <!-- Formulario de Registro de Mascota -->
+        <div class="form-container">
+            <div id="successMessage" class="success-message">
+                <i class="fas fa-check-circle"></i>
+                ¡Se ha ingresado su mascota con éxito!
+            </div>
+
+            <form id="registroMascotaForm">
+                <div class="form-grid">
+
+                    <!-- ID Mascota -->
+                    <div class="form-group">
+                        <label class="form-label">ID Mascota:</label>
+                        <input type="number" class="form-input" id="idMascota" required>
+                    </div>
+
+                    <!-- Nombre -->
+                    <div class="form-group">
+                        <label class="form-label">Nombre:</label>
+                        <input type="text" class="form-input" id="nombre" required>
+                    </div>
+
+                    <!-- Especie -->
+                    <div class="form-group">
+                        <label class="form-label">Especie:</label>
+                        <input type="text" class="form-input" id="especie" required>
+                    </div>
+
+                    <!-- Raza -->
+                    <div class="form-group">
+                        <label class="form-label">Raza:</label>
+                        <input type="text" class="form-input" id="raza" required>
+                    </div>
+
+                    <!-- Sexo -->
+                    <div class="form-group">
+                        <label class="form-label">Sexo:</label>
+                        <select class="form-input" id="sexo" required>
+                            <option value="">Seleccione</option>
+                            <option value="M">Macho</option>
+                            <option value="F">Hembra</option>
+                        </select>
+                    </div>
+
+                    <!-- Fecha de Nacimiento -->
+                    <div class="form-group">
+                        <label class="form-label">Fecha de Nacimiento:</label>
+                        <input type="date" class="form-input" id="fechaNacimiento" required>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="form-group">
+                        <label class="form-label">Color:</label>
+                        <input type="text" class="form-input" id="color" required>
+                    </div>
+
+                    <!-- Peso -->
+                    <div class="form-group">
+                        <label class="form-label">Peso (kg):</label>
+                        <input type="number" step="0.01" class="form-input" id="peso" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-guardar">
+                    <i class="fas fa-save"></i> Guardar Mascota
+                </button>
+            </form>
+        </div>
+
+        </div>
+    </div>
+
+<script>
+    const idCliente = sessionStorage.getItem("idCliente");
+    const correo = sessionStorage.getItem("correo");
+
+    document.addEventListener("DOMContentLoaded", () => {
+        if (!idCliente || !correo) {
+            alert("Debe iniciar sesión.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        // Prellenar el campo correo
+        document.getElementById("correo").value = correo;
+    });
+
+    document.getElementById("registroMascotaForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const idMascota = document.getElementById("idMascota").value;
+        const nombre = document.getElementById("nombre").value;
+        const especie = document.getElementById("especie").value;
+        const raza = document.getElementById("raza").value;
+        const sexo = document.getElementById("sexo").value;
+        const fechaNacimiento = document.getElementById("fechaNacimiento").value;
+        const color = document.getElementById("color").value;
+        const peso = document.getElementById("peso").value;
+
+        const nuevaMascota = {
+            idMascota: parseInt(idMascota),
+            nombre,
+            especie,
+            raza,
+            sexo,
+            fechaNacimiento,
+            color,
+            peso: parseFloat(peso),
+            idCliente: parseInt(idCliente),
+            correo
+        };
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/mascotas", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(nuevaMascota)
+            });
+
+            if (!response.ok) {
+                throw new Error("Error al registrar mascota");
+            }
+
+            alert("¡Mascota registrada con éxito!");
+            // Puedes redirigir o limpiar el formulario si quieres
+            window.location.href = "/usuario";
+        } catch (error) {
+            console.error("Error:", error);
+            alert("No se pudo registrar la mascota.");
+        }
+    });
+</script>
+
+</body>
+</html>

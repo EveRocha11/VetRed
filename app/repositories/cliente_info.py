@@ -31,6 +31,24 @@ class ClienteInfoRepository:
         finally:
             if cursor:
                 cursor.close()
+
+    def update(self, cliente: ClienteInfo) -> ClienteInfo:
+        cursor = None
+        try:
+            cursor = self.db.cursor()
+            cursor.execute(
+                "UPDATE Cliente_Info SET nombre = ? WHERE idCliente = ? AND correo = ?",
+                (cliente.nombre, cliente.idCliente, cliente.correo)
+            )
+            self.db.commit()
+            return cliente
+        except Exception as e:
+            logger.error(f"Error actualizando cliente info: {e}")
+            self.db.rollback()
+            raise
+        finally:
+            if cursor:
+                cursor.close()
     
     def get_by_email(self, correo: str) -> Optional[ClienteInfo]:
         """Obtener cliente por correo electrónico"""
@@ -136,6 +154,23 @@ class ClienteInfoRepository:
             
         except Exception as e:
             logger.error(f"Error verificando existencia de cliente: {e}")
+            raise
+        finally:
+            if cursor:
+                cursor.close()
+    
+    def delete(self, idCliente: int, correo: str):
+        cursor = None
+        try:
+            cursor = self.db.cursor()
+            cursor.execute(
+                "DELETE FROM Cliente_Info WHERE idCliente = ? AND correo = ?",
+                (idCliente, correo)
+            )
+            self.db.commit()
+        except Exception as e:
+            logger.error(f"Error eliminando cliente info: {e}")
+            self.db.rollback()
             raise
         finally:
             if cursor:
