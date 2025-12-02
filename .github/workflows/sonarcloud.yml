@@ -34,5 +34,6 @@ jobs:
           token: ${{ secrets.SONAR_TOKEN }}
           args: >
             -Dsonar.projectKey=EveRocha11_VetRed
+            -Dsonar.organization=everocha11
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
